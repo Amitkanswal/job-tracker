@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 28 28%27%3E%3Cpath d=%27M5 21C10 21 10 7 14 7s4 14 9 14%27 fill=%27none%27 stroke=%27%23C9BEDA%27 stroke-width=%273%27 stroke-linecap=%27round%27/%3E%3Ccircle cx=%275%27 cy=%2721%27 r=%273.5%27 fill=%27%232C6CB0%27/%3E%3Ccircle cx=%2714%27 cy=%277%27 r=%273.5%27 fill=%27%235B2A86%27/%3E%3Ccircle cx=%2723%27 cy=%2721%27 r=%273.5%27 fill=%27%23E39B12%27/%3E%3C/svg%3E">
+<title>Jobtrail — job application tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F3F8;--surface:#fff;--surface-2:#EFEBF4;--ink:#241B2F;--ink-2:#625775;--ink-3:#958CA5;--line:#E3DDEA;--plum:#5B2A86;--plum-ink:#fff;--plum-soft:#EEE5F7;--mari:#B97700;--mari-bright:#E39B12;--mari-soft:#FCEFD3;--ok:#1F8657;--ok-soft:#DCF1E6;--bad:#C2384F;--bad-soft:#F8E0E4;--info:#2C6CB0;--info-soft:#E0EBF7;--gray:#7C7488;--gray-soft:#ECE9F0;--shadow:0 1px 2px rgba(36,27,47,.06),0 10px 30px rgba(36,27,47,.10);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16111C;--surface:#201927;--surface-2:#2A2232;--ink:#F2EDF7;--ink-2:#B6ACC4;--ink-3:#857B94;--line:#382E43;--plum:#BC93E8;--plum-ink:#1B1222;--plum-soft:#34254A;--mari:#F0B23E;--mari-bright:#F0B23E;--mari-soft:#3A2D13;--ok:#53C38E;--ok-soft:#163024;--bad:#EE7085;--bad-soft:#3C1A22;--info:#76AEEB;--info-soft:#16283D;--gray:#A49BB1;--gray-soft:#2D2635;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16111C;--surface:#201927;--surface-2:#2A2232;--ink:#F2EDF7;--ink-2:#B6ACC4;--ink-3:#857B94;--line:#382E43;--plum:#BC93E8;--plum-ink:#1B1222;--plum-soft:#34254A;--mari:#F0B23E;--mari-bright:#F0B23E;--mari-soft:#3A2D13;--ok:#53C38E;--ok-soft:#163024;--bad:#EE7085;--bad-soft:#3C1A22;--info:#76AEEB;--info-soft:#16283D;--gray:#A49BB1;--gray-soft:#2D2635;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}
+
+/* stage colour pairs */
+.st-saved,.st-withdrawn{--c:var(--gray);--cs:var(--gray-soft)}
+.st-applied{--c:var(--info);--cs:var(--info-soft)}
+.st-screening{--c:var(--mari);--cs:var(--mari-soft)}
+.st-interviewing{--c:var(--plum);--cs:var(--plum-soft)}
+.st-offer,.st-accepted{--c:var(--ok);--cs:var(--ok-soft)}
+.st-rejected{--c:var(--bad);--cs:var(--bad-soft)}
+.st-ghosted,.st-closed{--c:var(--gray);--cs:var(--gray-soft)}
+.rs-scheduled{--c:var(--info);--cs:var(--info-soft)}
+.rs-awaiting{--c:var(--mari);--cs:var(--mari-soft)}
+.rs-passed{--c:var(--ok);--cs:var(--ok-soft)}
+.rs-failed{--c:var(--bad);--cs:var(--bad-soft)}
+.rs-cancelled{--c:var(--gray);--cs:var(--gray-soft)}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+html{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque','Figtree',system-ui,sans-serif;margin:0;letter-spacing:-.01em;line-height:1.2}
+p{margin:0}
+a{color:var(--plum)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--plum);outline-offset:2px}
+kbd{font:600 11px/1 'Figtree',sans-serif;padding:3px 6px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink-3)}
+.ic{flex:none}
+.grow{flex:1;min-width:0}
+.row{display:flex;align-items:center;gap:8px}
+.row.wrap{flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.row.center{justify-content:center}
+.spacer{flex:1}
+.hint{font-size:13px;color:var(--ink-3)}
+.pad{padding:24px 8px;text-align:center}
+
+/* layout */
+.app{display:grid;grid-template-columns:228px 1fr;height:100%}
+.nav{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 12px;gap:2px}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 10px 22px;font:700 21px 'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+.nav-btn{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;border:0;background:none;color:var(--ink-2);cursor:pointer;font-weight:500;text-align:left;width:100%}
+.nav-btn:hover{background:var(--surface-2);color:var(--ink)}
+.nav-btn[aria-current="page"]{background:var(--plum-soft);color:var(--plum);font-weight:600}
+.nav-btn kbd{margin-left:auto}
+.nav-foot{margin-top:auto;display:flex;flex-direction:column;gap:2px}
+.main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:12px;padding:18px 28px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.topbar h1{font-size:25px;font-weight:700}
+#saveState{margin-right:auto}
+.sync-chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2);background:none;border:0;padding:5px 9px;border-radius:8px;cursor:pointer}
+.sync-chip:hover{background:var(--surface-2);color:var(--ink)}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.sdot.warn{background:var(--mari-bright)}.sdot.bad{background:var(--bad)}
+.sdot.busy{background:var(--info);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+.steps{margin:4px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;max-width:70ch}
+.steps li::marker{font-weight:700;color:var(--plum)}
+details.conn summary{cursor:pointer;font-size:14px;color:var(--ink-2);margin-top:14px}
+.search{position:relative;display:flex;align-items:center}
+.search .ic{position:absolute;left:11px;color:var(--ink-3);pointer-events:none}
+.search input{width:270px;padding:8px 38px 8px 36px;border:1px solid var(--line);border-radius:10px;background:var(--surface);outline:none}
+.search input:focus{border-color:var(--plum);box-shadow:0 0 0 3px var(--plum-soft)}
+.search kbd{position:absolute;right:9px}
+.content{flex:1;overflow:auto;padding:22px 28px 48px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;white-space:nowrap;text-decoration:none;color:var(--ink);transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--ink-3)}
+.btn-primary{background:var(--plum);color:var(--plum-ink);border-color:transparent}
+.btn-primary:hover{border-color:transparent;filter:brightness(1.1)}
+.btn-ai{background:var(--mari-soft);border-color:transparent}
+.btn-ai .ic{color:var(--mari-bright)}
+.btn-ai:hover{border-color:var(--mari-bright)}
+.btn-ghost{border-color:transparent;background:none}
+.btn-ghost:hover{background:var(--surface-2);border-color:transparent}
+.btn-sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.icon-only{padding:7px}
+.btn.danger{color:var(--bad)}
+.btn.danger:hover{border-color:var(--bad)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* inputs */
+.input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus{border-color:var(--plum);box-shadow:0 0 0 3px var(--plum-soft)}
+textarea.input{resize:vertical;min-height:84px;line-height:1.55}
+select.input{cursor:pointer}
+.input.sm{width:auto;padding:6px 10px;font-size:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span,.field .lbl{font-size:13px;font-weight:500;color:var(--ink-2)}
+.field.full{grid-column:1/-1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.input-row{display:flex;gap:8px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+
+/* chips & pills */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--cs);color:var(--c);white-space:nowrap}
+.pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--gray-soft);color:var(--ink-2);font-weight:500;white-space:nowrap}
+.tag.warn{background:var(--mari-soft);color:var(--mari)}
+.tag.good{background:var(--ok-soft);color:var(--ok)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+.tag.info{background:var(--info-soft);color:var(--info)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 10px;border-radius:999px;font-size:13px;background:var(--surface-2)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.kw{background:var(--plum-soft);color:var(--plum)}
+.logo{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;font:700 15px 'Bricolage Grotesque',sans-serif;color:#fff;background:hsl(var(--h) 42% 44%)}
+.logo.lg{width:50px;height:50px;font-size:22px;border-radius:13px}
+
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+
+/* the trail */
+.trail{display:flex;align-items:flex-start;margin:0 0 20px;padding:18px 10px 16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow-x:auto}
+.station{flex:1;min-width:104px;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.station::before{content:'';position:absolute;top:22px;right:50%;width:100%;height:3px;border-radius:3px;background:var(--line)}
+.station.lit::before{background:var(--c)}
+.station:first-child::before{display:none}
+.station .dot{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--surface);color:var(--c);font:700 18px 'Bricolage Grotesque',sans-serif;border:3px solid var(--c);margin-bottom:4px}
+.station.lit .dot{background:var(--c);color:var(--surface)}
+.station .lbl{font-size:13.5px;font-weight:600}
+.station .sub{font-size:12px;color:var(--ink-3)}
+.trail .gap{width:1px;background:var(--line);margin:4px 6px;align-self:stretch}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(6,minmax(232px,1fr));gap:12px;align-items:start;overflow-x:auto;padding-bottom:8px}
+.col{background:var(--surface-2);border-radius:14px;padding:8px;min-height:180px;display:flex;flex-direction:column;gap:8px;transition:background .15s}
+.col.drop{outline:2px dashed var(--c);outline-offset:-2px;background:var(--cs)}
+.col-head{display:flex;align-items:center;gap:8px;padding:6px 6px 4px;font-weight:600;font-size:14px}
+.col-head .pip{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.col-head .n{color:var(--ink-3);font-weight:500}
+.col-head .btn{margin-left:auto;padding:3px;color:var(--ink-3)}
+.col-empty{font-size:13px;color:var(--ink-3);text-align:center;padding:18px 10px;border:1.5px dashed var(--line);border-radius:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:8px;text-align:left;width:100%;color:var(--ink)}
+.card:hover{border-color:var(--ink-3)}
+.card.dragging{opacity:.4}
+.card-top{display:flex;gap:10px;align-items:flex-start}
+.card h4{font-size:14.5px;font-weight:600;line-height:1.3}
+.card .co{font-size:13px;color:var(--ink-2)}
+.prio{width:8px;height:8px;border-radius:50%;flex:none;margin-top:6px}
+.prio.high{background:var(--bad)}.prio.med{background:var(--mari-bright)}.prio.low{background:var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--ink-2)}
+.meta span{display:inline-flex;align-items:center;gap:4px}
+.card .tags{display:flex;flex-wrap:wrap;gap:5px}
+
+/* table */
+.table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--ink-2);font-size:13px;padding:0;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--surface)}
+th button{all:unset;display:flex;gap:4px;align-items:center;padding:11px 14px;cursor:pointer;width:100%;box-sizing:border-box}
+th button:focus-visible{outline:2px solid var(--plum);outline-offset:-2px}
+td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td .cell-co{display:flex;align-items:center;gap:10px;font-weight:600}
+td .cell-co .logo{width:26px;height:26px;font-size:12px;border-radius:7px}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.panel h3{font-size:16px;font-weight:600}
+.panel .sub{font-size:13px;color:var(--ink-3);margin:2px 0 14px}
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.panel.wide{grid-column:1/-1}
+.chart-box{position:relative;height:240px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi b{display:block;font:700 26px/1.15 'Bricolage Grotesque',sans-serif}
+.kpi span{font-size:13px;color:var(--ink-2)}
+.report{margin-top:14px}
+.report h3{margin-bottom:10px}
+.md{line-height:1.65;max-width:76ch}
+.md h1,.md h2{font-size:18px;margin:20px 0 6px}
+.md h3,.md h4{font-size:15.5px;margin:16px 0 4px}
+.md>*:first-child{margin-top:0}
+.md p{margin:6px 0}
+.md ul,.md ol{margin:6px 0;padding-left:22px}
+.md li{margin:3px 0}
+.ai-empty{text-align:center;padding:30px 20px;border:1.5px dashed var(--line);border-radius:14px;color:var(--ink-2);display:flex;flex-direction:column;align-items:center;gap:12px}
+.ai-empty p{max-width:52ch}
+.skel{display:flex;flex-direction:column;gap:10px;padding:6px 0}
+.skel i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--surface-2),var(--line),var(--surface-2));background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* companies */
+.co-layout{display:grid;grid-template-columns:270px 1fr;gap:16px;align-items:start}
+.co-list{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px;position:sticky;top:0;max-height:calc(100vh - 150px);overflow:auto}
+.co-item{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;cursor:pointer;border:0;background:none;width:100%;text-align:left;color:var(--ink)}
+.co-item:hover{background:var(--surface-2)}
+.co-item[aria-current="true"]{background:var(--plum-soft)}
+.co-item .nm{display:block;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-item .s{display:block;font-size:12.5px;color:var(--ink-2)}
+.co-detail{display:flex;flex-direction:column;gap:14px;min-width:0}
+.co-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.co-head h2{font-size:24px}
+.mini-stats{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.mini-stats b{display:block;font:700 22px 'Bricolage Grotesque',sans-serif}
+.mini-stats span{font-size:12.5px;color:var(--ink-2)}
+.co-apps{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.co-app{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:none;cursor:pointer;text-align:left;width:100%;color:var(--ink)}
+.co-app:hover{border-color:var(--ink-3)}
+.co-app b{display:block;font-weight:600}
+.tl{list-style:none;margin:12px 0 0;padding:0}
+.tl li{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:0 0 16px;position:relative}
+.tl li::before{content:'';position:absolute;left:70px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.tl li::after{content:'';position:absolute;left:74px;top:20px;bottom:2px;width:2px;background:var(--line)}
+.tl li:last-child::after{display:none}
+.tl li>div:last-child{padding-left:20px}
+.tl-date{font-size:13px;color:var(--ink-2);font-weight:500;padding-top:1px}
+.tl-note{font-size:13.5px;margin-top:4px;color:var(--ink-2)}
+.rpill{font-size:12px;font-weight:600;color:var(--c);background:var(--cs);padding:1px 8px;border-radius:999px;margin-left:6px}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(20,12,28,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(740px,100%);background:var(--bg);border-left:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(102%);transition:transform .26s cubic-bezier(.2,.8,.2,1);z-index:41;display:flex;flex-direction:column;outline:none}
+.drawer.open{transform:none}
+.d-head{padding:18px 22px 0;padding-top:calc(18px + env(safe-area-inset-top,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.d-title{display:flex;gap:12px;align-items:flex-start}
+.d-title input{border:0;background:none;width:100%;padding:2px 6px;margin-left:-6px;border-radius:6px;outline:none}
+.d-title input:hover,.d-title input:focus{background:var(--surface-2)}
+.d-title .role{font:700 21px 'Bricolage Grotesque',sans-serif;color:var(--ink)}
+.d-title .company{font-size:15px;color:var(--ink-2);margin-top:2px}
+.d-sub{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.sel-wrap{position:relative;display:inline-flex}
+.sel-wrap select{appearance:none;-webkit-appearance:none;border:0;padding:6px 28px 6px 12px;border-radius:999px;font-weight:600;font-size:13px;background:var(--cs);color:var(--c);cursor:pointer}
+.sel-wrap::after{content:'';position:absolute;right:11px;top:50%;width:6px;height:6px;border-right:2px solid var(--c);border-bottom:2px solid var(--c);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.sel-wrap option{background:var(--surface);color:var(--ink)}
+.tabs{display:flex;gap:2px;margin-top:12px;overflow-x:auto}
+.tab{border:0;background:none;padding:10px 12px;font-weight:500;color:var(--ink-2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--plum);border-color:var(--plum);font-weight:600}
+.tab .count{font-size:11.5px;background:var(--surface-2);color:var(--ink-2);padding:1px 7px;border-radius:999px}
+.d-body{flex:1;overflow:auto;padding:22px 22px calc(40px + env(safe-area-inset-bottom,0px))}
+.sec{margin-top:28px}
+.sec h3{font-size:15.5px;font-weight:600;margin-bottom:12px}
+.intro{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+.intro p{max-width:52ch;color:var(--ink-2);font-size:14px}
+.hist{list-style:none;padding:0;margin:0 0 0 5px;border-left:2px solid var(--line)}
+.hist li{position:relative;padding:0 0 12px 18px;font-size:14px}
+.hist li::before{content:'';position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.hist li span{color:var(--ink-3);margin-left:6px;font-size:13px}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.quick button{border:1px dashed var(--line);background:none;border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.quick button:hover{border-color:var(--plum);color:var(--plum)}
+.qa,.round{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.qa-head,.round-head{display:flex;gap:10px;align-items:flex-start}
+.num{width:26px;height:26px;border-radius:50%;background:var(--plum-soft);color:var(--plum);font-weight:700;display:grid;place-items:center;font-size:13px;flex:none;margin-top:4px}
+.qa textarea.q{font-weight:600;border:0;background:none;resize:none;padding:4px 6px;min-height:0;border-radius:6px;outline:none;width:100%;line-height:1.4}
+.qa textarea.q:hover,.qa textarea.q:focus{background:var(--surface-2)}
+.qa textarea.a{margin:10px 0}
+.round-head input.rname{font-weight:600;font-size:15px;border:0;background:none;flex:1;padding:4px 6px;border-radius:6px;outline:none;min-width:0}
+.round-head input.rname:hover,.round-head input.rname:focus{background:var(--surface-2)}
+.round .grid4{margin:12px 0}
+.stars{display:flex;align-items:center;gap:2px}
+.star{border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--line);padding:2px}
+.star.on{color:var(--mari-bright)}
+.stars .hint{margin-left:8px}
+.callout{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:12px;background:var(--mari-soft);margin-bottom:16px;flex-wrap:wrap}
+.callout p{flex:1;min-width:200px;font-size:14px}
+.ai-hero{display:flex;gap:20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+.ring{width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--rc) calc(var(--p) * 1%),var(--surface-2) 0);display:grid;place-items:center;flex:none}
+.ring b{width:76px;height:76px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 23px 'Bricolage Grotesque',sans-serif}
+.ai-hero h3{font-size:16px;margin-bottom:4px}
+.ai-hero p{font-size:14px;color:var(--ink-2)}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ai-grid .panel{padding:16px}
+.ai-grid h4{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ai-grid ul,.ai-grid ol{margin:0;padding-left:20px;font-size:14px}
+.ai-grid li{margin:4px 0}
+
+/* dialogs & toasts */
+dialog{border:0;border-radius:18px;padding:0;width:min(580px,calc(100% - 24px));max-height:calc(100% - 32px);background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(20,12,28,.42)}
+.dlg-head{padding:22px 22px 0}
+.dlg-head h2{font-size:21px}
+.dlg-head p{margin-top:4px}
+.dlg-body{padding:16px 22px}
+.dlg-foot{padding:6px 22px 20px;display:flex;justify-content:flex-end;gap:8px}
+details.paste{background:var(--mari-soft);border-radius:12px;padding:10px 14px;margin-bottom:16px}
+details.paste summary{cursor:pointer;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;list-style:none}
+details.paste summary::-webkit-details-marker{display:none}
+details.paste summary .ic{color:var(--mari-bright)}
+details.paste[open] summary{margin-bottom:10px}
+details.paste textarea{background:var(--surface)}
+details.paste .row{margin-top:8px}
+.err{color:var(--bad);font-size:13.5px;margin-top:10px;min-height:1px}
+.outcomes{display:grid;gap:8px}
+.outcomes button{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;text-align:left;font-weight:500;color:var(--ink)}
+.outcomes button:hover{border-color:var(--c);background:var(--cs)}
+.outcomes button::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--c)}
+#toasts{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:70;width:max-content;max-width:calc(100% - 24px)}
+.toast{background:var(--ink);color:var(--bg);padding:10px 12px 10px 16px;border-radius:12px;display:flex;gap:14px;align-items:center;font-size:14px;box-shadow:var(--shadow);animation:pop .2s ease-out}
+.toast button{background:none;border:0;color:var(--mari-bright);font-weight:700;cursor:pointer;padding:2px 4px}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+
+/* empty & settings */
+.empty{max-width:540px;margin:56px auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.empty h2{font-size:30px;letter-spacing:-.02em}
+.empty p{color:var(--ink-2);font-size:16px;max-width:44ch}
+.settings{max-width:760px;display:flex;flex-direction:column;gap:14px}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 20px;margin:0}
+.keys div{display:flex;align-items:center;gap:10px}
+.keys dt{min-width:42px}.keys dd{margin:0;font-size:14px;color:var(--ink-2)}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;grid-template-rows:1fr auto}
+  .nav{order:2;flex-direction:row;border-right:0;border-top:1px solid var(--line);padding:4px 6px calc(4px + env(safe-area-inset-bottom,0px));justify-content:space-around}
+  .brand,.nav kbd,.hide-sm{display:none!important}
+  .nav-btn{flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;width:auto;flex:1;align-items:center}
+  .nav-foot{margin:0;display:contents}
+  .topbar{padding:12px 16px;gap:10px}
+  .topbar h1{font-size:21px}
+  .search{order:3;width:100%}.search input{width:100%}.search kbd{display:none}
+  #addBtn span{display:none}
+  .content{padding:14px 14px 32px}
+  .grid2,.ai-grid,.charts{grid-template-columns:1fr}
+  .grid4{grid-template-columns:1fr 1fr}
+  .co-layout{grid-template-columns:1fr}
+  .co-list{position:static;max-height:240px}
+  .board{grid-template-columns:repeat(6,84vw);scroll-snap-type:x mandatory}
+  .col{scroll-snap-align:start}
+  .d-head,.d-body{padding-left:16px;padding-right:16px}
+  .ai-hero{flex-direction:column;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+@media print{
+  .nav,.topbar,.no-print,.drawer,.scrim,#toasts,.filters{display:none!important}
+  body,.panel,.kpi{background:#fff!important;color:#000}
+  .app{display:block}.main{height:auto;overflow:visible}.content{overflow:visible;padding:0}
+  .panel,.kpi{break-inside:avoid}
+  .co-layout{display:block}.co-list{display:none}
+  body.print-report .content>*:not(.print-target){display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav" aria-label="Main">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M5 21 C10 21 10 7 14 7 S18 21 23 21" fill="none" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/><circle cx="5" cy="21" r="3.5" fill="var(--info)"/><circle cx="14" cy="7" r="3.5" fill="var(--plum)"/><circle cx="23" cy="21" r="3.5" fill="var(--mari-bright)"/></svg>
+      <span>Jobtrail</span>
+    </div>
+    <button class="nav-btn" data-act="go" data-view="board"><i data-icon="board"></i><span>Board</span><kbd>1</kbd></button>
+    <button class="nav-btn" data-act="go" data-view="list"><i data-icon="list"></i><span>List</span><kbd>2</kbd></button>
+    <button class="nav-btn" data-act="go" data-view="companies"><i data-icon="building"></i><span>Companies</span><kbd>3</kbd></button>
+    <button class="nav-btn" data-act="go" data-view="insights"><i data-icon="chart"></i><span>Insights</span><kbd>4</kbd></button>
+    <div class="nav-foot">
+      <button class="nav-btn" data-act="go" data-view="settings"><i data-icon="sliders"></i><span>Settings</span></button>
+      <button class="nav-btn hide-sm" data-act="theme" id="themeBtn"><i data-icon="moon"></i><span>Dark mode</span></button>
+    </div>
+  </nav>
+  <main class="main">
+    <header class="topbar">
+      <h1 id="viewTitle">Board</h1>
+      <button id="saveState" class="sync-chip" data-act="sync-click" aria-live="polite"></button>
+      <label class="search"><i data-icon="search"></i><input id="q" type="search" placeholder="Search company, role, tag" aria-label="Search applications" autocomplete="off"><kbd>/</kbd></label>
+      <button class="btn btn-primary" id="addBtn" data-act="add"><i data-icon="plus"></i><span>Add application</span></button>
+    </header>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+<div class="scrim" id="scrim" data-act="close"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Application details" tabindex="-1"></aside>
+<dialog id="addDlg" aria-labelledby="addTitle"></dialog>
+<dialog id="outcomeDlg" aria-labelledby="outTitle"></dialog>
+<div id="toasts" aria-live="polite"></div>
+<!-- Google Sheet sync script (Apps Script). Single source of truth: the app copies this, with your secret filled in. -->
+<script type="text/plain" id="sheet-script">
+/**
+ * Jobtrail <-> Google Sheets sync.
+ * This script is bundled inside Jobtrail's index.html; the app copies it for you with your secret filled in.
+ *
+ * 1. Open an empty Google Sheet > Extensions > Apps Script. Replace the code with this file and save.
+ * 2. Pick "setup" in the function menu and Run it once. Allow access when asked.
+ * 3. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone. Deploy.
+ * 4. Copy the Web app URL (ends in /exec) into Jobtrail > Settings > Google Sheet sync.
+ *
+ * After editing this script later, use Deploy > Manage deployments > Edit > New version,
+ * so the same URL keeps working.
+ */
+var SECRET = 'PASTE-YOUR-SECRET-HERE';
+var SCRIPT_VERSION = 2; // bump when this script changes; Jobtrail prompts linked sheets to update
+
+var SCHEMA = {
+  Applications: ['id', 'company', 'role', 'status', 'priority', 'location', 'workMode', 'source', 'appliedOn', 'followUp', 'salaryExpected', 'salaryOffered', 'recruiter', 'contact', 'nextStep', 'tags', 'jdUrl', 'notes', 'jd', 'matchScore', 'aiAnalysis', 'createdAt', 'updatedAt'],
+  Rounds: ['id', 'appId', 'order', 'name', 'type', 'date', 'mode', 'interviewer', 'status', 'rating', 'asked', 'notes'],
+  Questions: ['id', 'appId', 'order', 'question', 'answer'],
+  History: ['appId', 'status', 'at'],
+  Reports: ['key', 'markdown', 'range', 'at'],
+  Profile: ['key', 'value']
+};
+var STATUS = {saved: 'Saved', applied: 'Applied', screening: 'Screening', interviewing: 'Interviewing', offer: 'Offer', accepted: 'Accepted', rejected: 'Rejected', withdrawn: 'Withdrawn', ghosted: 'No response'};
+var RSTATUS = {scheduled: 'Scheduled', awaiting: 'Awaiting result', passed: 'Cleared', failed: 'Not cleared', cancelled: 'Cancelled'};
+var PRIORITY = {high: 'High', med: 'Medium', low: 'Low'};
+var PLAIN = ['company', 'role', 'location', 'workMode', 'source', 'appliedOn', 'followUp', 'salaryExpected', 'salaryOffered', 'recruiter', 'contact', 'nextStep', 'tags', 'jdUrl', 'notes', 'jd', 'createdAt', 'updatedAt'];
+var MAX_CELL = 49000;
+
+// ---------- one-time setup ----------
+function setup() {
+  var ss = SpreadsheetApp.getActive();
+  Object.keys(SCHEMA).forEach(function (name) {
+    var cols = SCHEMA[name];
+    var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+    sh.getRange(1, 1, sh.getMaxRows(), cols.length).setNumberFormat('@');
+    sh.getRange(1, 1, 1, cols.length).setValues([cols]).setFontWeight('bold').setBackground('#EEE5F7');
+    sh.setFrozenRows(1);
+  });
+  var apps = ss.getSheetByName('Applications');
+  setList_(apps, 'status', values_(STATUS));
+  setList_(apps, 'priority', values_(PRIORITY));
+  setList_(ss.getSheetByName('Rounds'), 'status', values_(RSTATUS));
+  apps.getRange(1, SCHEMA.Applications.indexOf('jd') + 1, apps.getMaxRows(), 2).setWrap(false);
+  ss.getSheets().forEach(function (sh) {
+    if (!SCHEMA[sh.getName()] && sh.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(sh);
+  });
+  ss.setActiveSheet(apps);
+}
+function values_(o) { return Object.keys(o).map(function (k) { return o[k]; }); }
+function setList_(sh, col, list) {
+  var c = SCHEMA[sh.getName()].indexOf(col) + 1;
+  var rule = SpreadsheetApp.newDataValidation().requireValueInList(list, true).setAllowInvalid(true).build();
+  sh.getRange(2, c, sh.getMaxRows() - 1, 1).setDataValidation(rule);
+}
+
+// ---------- web app ----------
+function doGet() {
+  return ContentService.createTextOutput('Jobtrail sync is running. Paste this URL into Jobtrail > Settings.');
+}
+function doPost(e) {
+  try {
+    var p = JSON.parse(e.postData.contents);
+    if (!SECRET || SECRET.indexOf('PASTE-') === 0) return out_({ok: false, error: 'Set SECRET at the top of the Apps Script, then deploy a new version.'});
+    if (p.secret !== SECRET) return out_({ok: false, error: 'The secret in Jobtrail does not match SECRET in the Apps Script.'});
+    if (p.action === 'ping') return out_(meta_({ok: true}));
+    if (p.action === 'pull') return out_(meta_(withLock_(function () { var d = readAll_(); d.ok = true; return d; })));
+    if (p.action === 'push') return out_(meta_(withLock_(function () { return push_(p); })));
+    return out_({ok: false, error: 'Unknown action.'});
+  } catch (err) {
+    return out_({ok: false, error: 'Sheet error: ' + (err && err.message ? err.message : err)});
+  }
+}
+function meta_(o) {
+  var ss = SpreadsheetApp.getActive();
+  o.version = SCRIPT_VERSION; o.sheetName = ss.getName(); o.sheetUrl = ss.getUrl();
+  return o;
+}
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+function withLock_(fn) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try { return fn(); } finally { lock.releaseLock(); }
+}
+
+// ---------- sheet io ----------
+function sheet_(name) {
+  var sh = SpreadsheetApp.getActive().getSheetByName(name);
+  if (!sh) throw new Error('Tab "' + name + '" is missing. Run setup in Apps Script.');
+  return sh;
+}
+function header_(sh) { return sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0].map(String); }
+function cell_(v) {
+  if (v instanceof Date) {
+    return (v.getHours() || v.getMinutes() || v.getSeconds()) ? v.toISOString() : Utilities.formatDate(v, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+  return v === null || v === undefined ? '' : v;
+}
+function read_(name) {
+  var sh = sheet_(name), last = sh.getLastRow();
+  if (last < 2) return [];
+  var head = header_(sh);
+  return sh.getRange(2, 1, last - 1, head.length).getValues()
+    .filter(function (r) { return r.some(function (c) { return c !== '' && c !== null; }); })
+    .map(function (r) { var o = {}; head.forEach(function (h, i) { if (h) o[h] = cell_(r[i]); }); return o; });
+}
+function write_(name, rows) {
+  var sh = sheet_(name), head = header_(sh), last = sh.getLastRow();
+  SCHEMA[name].forEach(function (c) { if (head.indexOf(c) < 0) throw new Error('Column "' + c + '" is missing in tab ' + name + '. Run setup again.'); });
+  if (last > 1) sh.getRange(2, 1, last - 1, head.length).clearContent();
+  if (!rows.length) return;
+  var need = rows.length + 1 - sh.getMaxRows();
+  if (need > 0) sh.insertRowsAfter(sh.getMaxRows(), need);
+  var vals = rows.map(function (o) {
+    return head.map(function (c) {
+      var v = c ? o[c] : '';
+      if (v === undefined || v === null) v = '';
+      v = String(v);
+      return v.length > MAX_CELL ? v.slice(0, MAX_CELL) : v;
+    });
+  });
+  sh.getRange(2, 1, vals.length, head.length).setNumberFormat('@').setValues(vals);
+}
+function str_(v) { return v === undefined || v === null ? '' : String(v); }
+function key_(map, v, dflt) {
+  var s = str_(v).trim().toLowerCase();
+  if (!s) return dflt;
+  for (var k in map) if (k === s || map[k].toLowerCase() === s) return k;
+  return dflt;
+}
+function group_(rows) {
+  var g = {};
+  rows.forEach(function (r) { if (r.appId) (g[r.appId] = g[r.appId] || []).push(r); });
+  return g;
+}
+function byOrder_(a, b) { return (Number(a.order) || 0) - (Number(b.order) || 0); }
+
+// ---------- model mapping ----------
+function toApp_(r, kids) {
+  var ai = null;
+  try { ai = r.aiAnalysis ? JSON.parse(r.aiAnalysis) : null; } catch (e) { ai = null; }
+  var a = {id: str_(r.id), status: key_(STATUS, r.status, 'applied'), priority: key_(PRIORITY, r.priority, 'med'), ai: ai};
+  PLAIN.forEach(function (k) { a[k] = str_(r[k]); });
+  a.rounds = (kids.rounds[a.id] || []).slice().sort(byOrder_).map(function (x) {
+    return {id: str_(x.id), name: str_(x.name), type: str_(x.type) || 'Other', date: str_(x.date), mode: str_(x.mode) || 'Video call', interviewer: str_(x.interviewer), status: key_(RSTATUS, x.status, 'scheduled'), rating: Math.max(0, Math.min(5, Number(x.rating) || 0)), asked: str_(x.asked), notes: str_(x.notes)};
+  });
+  a.questions = (kids.questions[a.id] || []).slice().sort(byOrder_).map(function (x) {
+    return {id: str_(x.id), q: str_(x.question), a: str_(x.answer)};
+  });
+  a.history = (kids.history[a.id] || []).map(function (x) {
+    return {status: key_(STATUS, x.status, 'applied'), at: str_(x.at)};
+  }).sort(function (x, y) { return x.at < y.at ? -1 : x.at > y.at ? 1 : 0; });
+  if (!a.history.length) a.history = [{status: a.status, at: a.createdAt || a.updatedAt}];
+  return a;
+}
+function fromApp_(a) {
+  var row = {
+    id: a.id,
+    status: STATUS[a.status] || 'Applied',
+    priority: PRIORITY[a.priority] || 'Medium',
+    matchScore: a.ai && a.ai.jd && typeof a.ai.jd.matchScore === 'number' ? a.ai.jd.matchScore : '',
+    aiAnalysis: a.ai ? JSON.stringify(a.ai) : ''
+  };
+  PLAIN.forEach(function (k) { row[k] = a[k] || ''; });
+  return {
+    row: row,
+    rounds: (a.rounds || []).map(function (x, i) {
+      return {id: x.id, appId: a.id, order: i + 1, name: x.name, type: x.type, date: x.date, mode: x.mode, interviewer: x.interviewer, status: RSTATUS[x.status] || 'Scheduled', rating: x.rating || '', asked: x.asked, notes: x.notes};
+    }),
+    questions: (a.questions || []).map(function (x, i) {
+      return {id: x.id, appId: a.id, order: i + 1, question: x.q, answer: x.a};
+    }),
+    history: (a.history || []).map(function (h) {
+      return {appId: a.id, status: STATUS[h.status] || h.status, at: h.at};
+    })
+  };
+}
+
+// ---------- operations ----------
+// Gives ids and timestamps to rows typed straight into the sheet.
+function ensureIds_(apps, rounds, qs) {
+  var now = new Date().toISOString(), dirty = {};
+  apps.forEach(function (r) {
+    if (!r.id && (r.company || r.role)) { r.id = Utilities.getUuid(); dirty.a = 1; }
+    if (r.id && !r.updatedAt) { r.updatedAt = now; dirty.a = 1; }
+    if (r.id && !r.createdAt) { r.createdAt = r.updatedAt || now; dirty.a = 1; }
+  });
+  rounds.forEach(function (r) { if (!r.id && r.appId) { r.id = Utilities.getUuid(); dirty.r = 1; } });
+  qs.forEach(function (r) { if (!r.id && r.appId) { r.id = Utilities.getUuid(); dirty.q = 1; } });
+  if (dirty.a) write_('Applications', apps);
+  if (dirty.r) write_('Rounds', rounds);
+  if (dirty.q) write_('Questions', qs);
+}
+function readAll_() {
+  var apps = read_('Applications'), rounds = read_('Rounds'), qs = read_('Questions'), hist = read_('History');
+  ensureIds_(apps, rounds, qs);
+  var kids = {rounds: group_(rounds), questions: group_(qs), history: group_(hist)};
+  return {
+    apps: apps.filter(function (r) { return r.id; }).map(function (r) { return toApp_(r, kids); }),
+    reports: readReports_(),
+    profile: readProfile_()
+  };
+}
+function push_(p) {
+  var apps = read_('Applications'), rounds = read_('Rounds'), qs = read_('Questions'), hist = read_('History');
+  ensureIds_(apps, rounds, qs);
+  var byId = {}, order = [];
+  apps.forEach(function (r) { if (r.id) { byId[r.id] = r; order.push(r.id); } });
+  var touched = {}, del = {}, conflicts = [];
+  (p.apps || []).forEach(function (a) {
+    if (!a || !a.id) return;
+    var cur = byId[a.id];
+    if (cur && str_(cur.updatedAt) > str_(a.updatedAt)) { conflicts.push(a.id); return; }
+    var f = fromApp_(a), merged = {};
+    Object.keys(cur || {}).forEach(function (k) { merged[k] = cur[k]; }); // keeps any extra columns you added
+    Object.keys(f.row).forEach(function (k) { merged[k] = f.row[k]; });
+    if (!cur) order.push(a.id);
+    byId[a.id] = merged;
+    touched[a.id] = f;
+  });
+  (p.deletes || []).forEach(function (id) { if (byId[id]) { del[id] = 1; delete byId[id]; } });
+  var changed = Object.keys(touched).length || Object.keys(del).length;
+  if (changed) {
+    var keep = function (r) { return !del[r.appId] && !touched[r.appId]; };
+    rounds = rounds.filter(keep); qs = qs.filter(keep); hist = hist.filter(keep);
+    Object.keys(touched).forEach(function (id) {
+      rounds = rounds.concat(touched[id].rounds); qs = qs.concat(touched[id].questions); hist = hist.concat(touched[id].history);
+    });
+    var appRows = order.filter(function (id) { return byId[id]; }).map(function (id) { return byId[id]; })
+      .sort(function (x, y) { var a = str_(x.appliedOn || x.createdAt), b = str_(y.appliedOn || y.createdAt); return a < b ? 1 : a > b ? -1 : 0; });
+    var pos = {};
+    appRows.forEach(function (r, i) { pos[r.id] = i; });
+    var kidSort = function (x, y) { return (pos[x.appId] - pos[y.appId]) || byOrder_(x, y) || (x.at < y.at ? -1 : x.at > y.at ? 1 : 0); };
+    write_('Applications', appRows);
+    write_('Rounds', rounds.filter(function (r) { return r.appId in pos; }).sort(kidSort));
+    write_('Questions', qs.filter(function (r) { return r.appId in pos; }).sort(kidSort));
+    write_('History', hist.filter(function (r) { return r.appId in pos; }).sort(kidSort));
+  }
+  if (p.reports) writeReports_(p.reports);
+  if (p.profile) write_('Profile', [{key: 'resume', value: p.profile.resume || ''}, {key: 'targetRole', value: p.profile.targetRole || ''}]);
+  var res = {ok: true, conflicts: []};
+  if (conflicts.length) {
+    var kids = {rounds: group_(rounds), questions: group_(qs), history: group_(hist)};
+    res.conflicts = conflicts.map(function (id) { return toApp_(byId[id], kids); });
+  }
+  return res;
+}
+function readReports_() {
+  var res = {companies: {}, pipeline: null};
+  read_('Reports').forEach(function (r) {
+    var rep = {md: str_(r.markdown), at: str_(r.at)};
+    if (r.key === '__pipeline__') { rep.range = str_(r.range) || 'all'; res.pipeline = rep; }
+    else if (r.key) res.companies[str_(r.key)] = rep;
+  });
+  return res;
+}
+function writeReports_(rep) {
+  var rows = Object.keys(rep.companies || {}).map(function (k) {
+    var x = rep.companies[k]; return {key: k, markdown: x.md, range: '', at: x.at};
+  });
+  if (rep.pipeline && rep.pipeline.md) rows.push({key: '__pipeline__', markdown: rep.pipeline.md, range: rep.pipeline.range || 'all', at: rep.pipeline.at});
+  write_('Reports', rows);
+}
+function readProfile_() {
+  var o = {};
+  read_('Profile').forEach(function (r) { if (r.key) o[str_(r.key)] = str_(r.value); });
+  return o;
+}
+
+// ---------- keep updatedAt fresh when you edit the sheet by hand ----------
+function onEdit(e) {
+  if (!e || !e.range) return;
+  var sh = e.range.getSheet(), name = sh.getName(), row = e.range.getRow(), n = e.range.getNumRows();
+  if (row + n - 1 < 2) return;
+  if (row < 2) { n -= 2 - row; row = 2; }
+  var now = new Date().toISOString();
+  if (name === 'Applications') {
+    var up = header_(sh).indexOf('updatedAt') + 1;
+    if (!up || (e.range.getColumn() === up && e.range.getNumColumns() === 1)) return;
+    var stamp = [];
+    for (var i = 0; i < n; i++) stamp.push([now]);
+    sh.getRange(row, up, n, 1).setNumberFormat('@').setValues(stamp);
+  } else if (name === 'Rounds' || name === 'Questions' || name === 'History') {
+    var ac = header_(sh).indexOf('appId') + 1;
+    if (!ac) return;
+    var ids = {};
+    sh.getRange(row, ac, n, 1).getValues().forEach(function (r) { if (r[0]) ids[r[0]] = 1; });
+    var app = sh.getParent().getSheetByName('Applications');
+    if (!app || app.getLastRow() < 2) return;
+    var ah = header_(app), ic = ah.indexOf('id'), uc = ah.indexOf('updatedAt');
+    if (ic < 0 || uc < 0) return;
+    app.getRange(2, ic + 1, app.getLastRow() - 1, 1).getValues().forEach(function (r, i) {
+      if (ids[r[0]]) app.getRange(i + 2, uc + 1).setNumberFormat('@').setValue(now);
+    });
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script>
+(() => {
+'use strict';
+// ---------- utilities ----------
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+const nowISO = () => new Date().toISOString();
+const day = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const todayISO = () => day(new Date());
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
+const toDate = s => s ? new Date(s.length === 10 ? s + 'T00:00:00' : s) : null;
+const diffDays = (a, b) => Math.round((toDate(b) - toDate(a)) / 86400000);
+const fmtDate = s => { const d = toDate(s); return d && !isNaN(d) ? d.toLocaleDateString(undefined, {day:'numeric', month:'short'}) : '—'; };
+const rel = s => { const d = toDate(s); if (!d || isNaN(d)) return '—'; const n = Math.floor((Date.now() - d) / 86400000); if (n <= 0) return 'today'; if (n === 1) return 'yesterday'; if (n < 30) return n + 'd ago'; return fmtDate(s); };
+const hue = s => { let h = 0; for (const ch of String(s || '?')) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+const initial = s => (String(s || '').trim()[0] || '?').toUpperCase();
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '—';
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const opts = (list, val) => list.map(o => { const [v, l] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(l)}</option>`; }).join('');
+
+const ICONS = {
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  pin:'<path d="M19 10c0 5.5-7 11-7 11s-7-5.5-7-11a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  board:'<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/>',
+  list:'<path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+  building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M8 7h.01M12 7h.01M16 7h.01M8 11h.01M12 11h.01M16 11h.01M8 15h.01M16 15h.01"/>',
+  chart:'<path d="M3 3v18h18"/><path d="M7 16v-4M12 16V8M17 16v-7"/>',
+  sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  print:'<path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/>',
+  link:'<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  laptop:'<rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 20h20"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  arrow:'<path d="M9 18l6-6-6-6"/>'
+};
+const icon = (n, s = 18) => `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ''}</svg>`;
+
+// ---------- domain ----------
+const STATUSES = [['saved','Saved'],['applied','Applied'],['screening','Screening'],['interviewing','Interviewing'],['offer','Offer'],['accepted','Accepted'],['rejected','Rejected'],['withdrawn','Withdrawn'],['ghosted','No response']];
+const SLABEL = Object.fromEntries(STATUSES);
+const SORDER = Object.fromEntries(STATUSES.map(([s], i) => [s, i]));
+const COLOF = {saved:'saved', applied:'applied', screening:'screening', interviewing:'interviewing', offer:'offer', accepted:'offer', rejected:'closed', withdrawn:'closed', ghosted:'closed'};
+const COLUMNS = [['saved','Saved'],['applied','Applied'],['screening','Screening'],['interviewing','Interviewing'],['offer','Offer'],['closed','Closed']];
+const CLOSED = ['rejected','withdrawn','ghosted'];
+const RANK = {saved:0, applied:1, screening:2, interviewing:3, offer:4, accepted:5};
+const SOURCES = ['LinkedIn','Naukri','Referral','Company website','Recruiter outreach','Instahyre','Wellfound','Other'];
+const MODES = ['Onsite','Hybrid','Remote'];
+const LOCS = ['Pune','Bengaluru','Hyderabad','Mumbai','Gurugram','Chennai','Remote'];
+const ROUND_TYPES = ['Recruiter call','Online assessment','Coding','Technical','System design','Take-home assignment','Managerial','HR','Culture fit','Other'];
+const ROUND_MODES = ['Video call','Phone','In person','Async'];
+const RSTAT = [['scheduled','Scheduled'],['awaiting','Awaiting result'],['passed','Cleared'],['failed','Not cleared'],['cancelled','Cancelled']];
+const RSLABEL = Object.fromEntries(RSTAT);
+const SCOLOR = {saved:'--gray', applied:'--info', screening:'--mari-bright', interviewing:'--plum', offer:'--ok', accepted:'--ok', rejected:'--bad', withdrawn:'--gray', ghosted:'--ink-3'};
+const QUICK_Q = ['What is your notice period?','What is your current CTC?','What is your expected CTC?','Why do you want to join us?','Why are you looking for a change?','Are you open to relocating?','Describe a project you are proud of.'];
+
+// ---------- storage ----------
+const KEY = 'jobtrail.v1';
+const defaults = () => ({apps:[], settings:{apiKey:'', model:'gemini-2.5-flash', resume:'', targetRole:'', theme:'auto'}, reports:{companies:{}, pipeline:null}});
+function normalize(a) {
+  const n = Object.assign({id:uid(), company:'', role:'', location:'', workMode:'', source:'', jdUrl:'', jd:'', status:'applied', priority:'med', appliedOn:'', followUp:'', salaryExpected:'', salaryOffered:'', recruiter:'', contact:'', nextStep:'', notes:'', tags:'', rounds:[], questions:[], ai:null, history:[], createdAt:nowISO(), updatedAt:nowISO()}, a);
+  if (!Array.isArray(n.rounds)) n.rounds = [];
+  if (!Array.isArray(n.questions)) n.questions = [];
+  if (!Array.isArray(n.history)) n.history = [];
+  if (!SLABEL[n.status]) n.status = 'applied';
+  return n;
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return defaults();
+    const d = JSON.parse(raw), def = defaults();
+    return {apps:(d.apps || []).map(normalize), settings:{...def.settings, ...(d.settings || {})}, reports:{...def.reports, ...(d.reports || {}), companies:{...((d.reports || {}).companies || {})}}};
+  } catch (e) { return defaults(); }
+}
+let db = load();
+let saveT, savedT;
+// The Google Sheet is the source of truth. localStorage is only a working copy for speed and offline use.
+function cacheLocal() { try { localStorage.setItem(KEY, JSON.stringify(db)); return true; } catch (e) { return false; } }
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    if (!cacheLocal() && !connected()) toast('Could not save. Connect your Google Sheet in Settings so nothing is lost.', {ms:9000});
+    persistSync(); schedulePush(); renderSyncState();
+  }, 250);
+}
+const getApp = id => db.apps.find(a => a.id === id);
+const touch = a => { a.updatedAt = nowISO(); markDirty(a.id); save(); };
+function createApp(p = {}) {
+  const a = normalize({...p, id:uid(), createdAt:nowISO(), updatedAt:nowISO()});
+  a.history = [{status:a.status, at:nowISO()}];
+  if (a.status !== 'saved' && !a.appliedOn) a.appliedOn = todayISO();
+  db.apps.unshift(a); markDirty(a.id); save();
+  return a;
+}
+function setStatus(a, status) {
+  if (!a || a.status === status) return;
+  a.status = status;
+  a.history.push({status, at:nowISO()});
+  if (status !== 'saved' && !a.appliedOn) a.appliedOn = todayISO();
+  touch(a);
+}
+const coKey = s => String(s || '').trim().toLowerCase() || '(no company)';
+function reached(a) {
+  let r = RANK[a.status] ?? 1;
+  for (const h of a.history) r = Math.max(r, RANK[h.status] ?? 1);
+  return r;
+}
+const responded = a => reached(a) >= 2 || a.status === 'rejected';
+function firstResponseDays(a) {
+  if (!a.appliedOn) return null;
+  const h = a.history.find(x => !['saved','applied','withdrawn'].includes(x.status) && x.at.slice(0, 10) >= a.appliedOn);
+  return h ? Math.max(0, diffDays(a.appliedOn, h.at.slice(0, 10))) : null;
+}
+const isActive = a => !['saved','accepted', ...CLOSED].includes(a.status);
+const nextRound = a => a.rounds.filter(r => r.status === 'scheduled' && r.date && r.date >= todayISO()).sort((x, y) => x.date.localeCompare(y.date))[0];
+const followDue = a => isActive(a) && a.followUp && a.followUp <= todayISO();
+
+// ---------- ui state ----------
+const ui = {view:'board', q:'', filters:{source:'', mode:'', priority:'', status:''}, openId:null, tab:'overview', company:null, range:'all', sort:{key:'updatedAt', dir:-1}, models:null, keyStatus:'', busy:{}, pendingOutcome:null};
+let charts = [];
+const destroyCharts = () => { charts.forEach(c => c.destroy()); charts = []; };
+
+function visibleApps() {
+  const q = ui.q.trim().toLowerCase(), f = ui.filters;
+  return db.apps.filter(a => {
+    if (f.source && a.source !== f.source) return false;
+    if (f.mode && a.workMode !== f.mode) return false;
+    if (f.priority && a.priority !== f.priority) return false;
+    if (q) {
+      const hay = [a.company, a.role, a.location, a.tags, a.source, a.notes, a.recruiter, SLABEL[a.status]].join(' ').toLowerCase();
+      if (!q.split(/\s+/).every(t => hay.includes(t))) return false;
+    }
+    return true;
+  });
+}
+const sourcesInUse = () => [...new Set([...SOURCES, ...db.apps.map(a => a.source).filter(Boolean)])];
+const pill = s => `<span class="pill st-${s}">${esc(SLABEL[s])}</span>`;
+const logo = (name, cls = '') => `<span class="logo ${cls}" style="--h:${hue(name)}" aria-hidden="true">${esc(initial(name))}</span>`;
+
+function filtersBar(extra = '', withStatus = false) {
+  const f = ui.filters, any = f.source || f.mode || f.priority || f.status || ui.q;
+  return `<div class="filters">
+    ${withStatus ? `<select class="input sm" data-filter="status" aria-label="Filter by stage"><option value="">Every stage</option>${opts(COLUMNS, f.status)}</select>` : ''}
+    <select class="input sm" data-filter="source" aria-label="Filter by source"><option value="">All sources</option>${opts(sourcesInUse(), f.source)}</select>
+    <select class="input sm" data-filter="mode" aria-label="Filter by work mode"><option value="">Any work mode</option>${opts(MODES, f.mode)}</select>
+    <select class="input sm" data-filter="priority" aria-label="Filter by priority"><option value="">Any priority</option>${opts([['high','High priority'],['med','Medium priority'],['low','Low priority']], f.priority)}</select>
+    ${any ? `<button class="btn btn-ghost btn-sm" data-act="clear-filters">Clear filters</button>` : ''}
+    <span class="spacer"></span>${extra}
+  </div>`;
+}
+const emptyState = () => `<div class="empty">
+  <svg width="180" height="70" viewBox="0 0 180 70" aria-hidden="true"><path d="M14 52 C50 52 50 18 90 18 S130 52 166 52" fill="none" stroke="var(--line)" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 9"/><circle cx="14" cy="52" r="9" fill="var(--info)"/><circle cx="90" cy="18" r="9" fill="var(--plum)"/><circle cx="166" cy="52" r="9" fill="var(--mari-bright)"/></svg>
+  <h2>Start your trail</h2>
+  <p>Add a job you've applied to. Paste its job description and Gemini can fill in the details for you.</p>
+  <div class="row wrap center"><button class="btn btn-primary" data-act="add">${icon('plus')} Add application</button>${connected() ? '' : `<button class="btn" data-act="goto-settings">Link Google Sheet</button>`}<button class="btn btn-ghost" data-act="sample">Explore with sample data</button></div>
+</div>`;
+const noMatch = () => `<div class="empty"><h2>Nothing matches</h2><p>No applications fit these filters or this search.</p><button class="btn" data-act="clear-filters">Clear filters</button></div>`;
+
+// ---------- board ----------
+function cardHTML(a) {
+  const nr = nextRound(a), score = a.ai?.jd?.matchScore;
+  const tags = [];
+  if (COLOF[a.status] === 'closed' || a.status === 'accepted') tags.push(pill(a.status));
+  if (nr) tags.push(`<span class="tag info">${icon('cal', 13)} ${esc(nr.name || nr.type || 'Round')}, ${fmtDate(nr.date)}</span>`);
+  if (followDue(a)) tags.push(`<span class="tag warn">${icon('bell', 13)} Follow up</span>`);
+  if (a.rounds.length && !nr) tags.push(`<span class="tag">${icon('layers', 13)} ${plural(a.rounds.length, 'round')}</span>`);
+  if (typeof score === 'number') tags.push(`<span class="tag ${score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad'}">${score}% match</span>`);
+  return `<article class="card" role="button" tabindex="0" draggable="true" data-act="open" data-id="${a.id}" aria-label="${esc(a.role || 'Untitled role')} at ${esc(a.company || 'unknown company')}, ${esc(SLABEL[a.status])}">
+    <div class="card-top">${logo(a.company)}<div class="grow"><h4>${esc(a.role || 'Untitled role')}</h4><div class="co">${esc(a.company || 'No company')}</div></div><span class="prio ${a.priority}" title="${a.priority === 'high' ? 'High' : a.priority === 'low' ? 'Low' : 'Medium'} priority"></span></div>
+    <div class="meta">${a.location ? `<span>${icon('pin', 13)}${esc(a.location)}</span>` : ''}${a.workMode ? `<span>${icon('laptop', 13)}${esc(a.workMode)}</span>` : ''}<span>${a.appliedOn ? 'Applied ' + rel(a.appliedOn) : 'Saved ' + rel(a.createdAt)}</span></div>
+    ${tags.length ? `<div class="tags">${tags.join('')}</div>` : ''}
+  </article>`;
+}
+function trailHTML(apps) {
+  const applied = apps.filter(a => reached(a) >= 1).length;
+  const st = [['applied','Applied',1],['screening','Screening',2],['interviewing','Interviewing',3],['offer','Offer',4]];
+  const saved = apps.filter(a => a.status === 'saved').length;
+  return `<div class="trail" aria-label="Pipeline overview">
+    <div class="station st-saved ${saved ? 'lit' : ''}"><span class="dot">${saved}</span><span class="lbl">Saved</span><span class="sub">to apply</span></div>
+    <span class="gap" aria-hidden="true"></span>
+    ${st.map(([s, l, r], i) => { const n = apps.filter(a => reached(a) >= r).length; return `<div class="station st-${s} ${n ? 'lit' : ''}"><span class="dot">${n}</span><span class="lbl">${l}</span><span class="sub">${i === 0 ? `${apps.filter(a => isActive(a)).length} active` : applied ? pct(n, applied) + ' of applied' : '—'}</span></div>`; }).join('')}
+  </div>`;
+}
+function renderBoard(c) {
+  if (!db.apps.length) { c.innerHTML = emptyState(); return; }
+  const apps = visibleApps();
+  c.innerHTML = filtersBar() + trailHTML(apps) + `<div class="board">${COLUMNS.map(([id, label]) => {
+    const list = apps.filter(a => COLOF[a.status] === id).sort((x, y) => (y.priority === 'high') - (x.priority === 'high') || y.updatedAt.localeCompare(x.updatedAt));
+    return `<section class="col st-${id}" data-col="${id}" aria-label="${label}">
+      <div class="col-head"><span class="pip"></span>${label}<span class="n">${list.length}</span>${id !== 'closed' ? `<button class="btn btn-ghost btn-sm" data-act="add" data-status="${id}" title="Add to ${label}" aria-label="Add application to ${label}">${icon('plus', 16)}</button>` : ''}</div>
+      ${list.map(cardHTML).join('') || `<div class="col-empty">${id === 'closed' ? 'Drag finished applications here' : 'Drop cards here'}</div>`}
+    </section>`;
+  }).join('')}</div>`;
+}
+
+// ---------- list ----------
+const LIST_COLS = [['company','Company'],['role','Role'],['location','Location'],['workMode','Mode'],['source','Source'],['status','Status'],['appliedOn','Applied'],['rounds','Rounds'],['match','Match'],['updatedAt','Updated']];
+function renderList(c) {
+  if (!db.apps.length) { c.innerHTML = emptyState(); return; }
+  let apps = visibleApps();
+  if (ui.filters.status) apps = apps.filter(a => COLOF[a.status] === ui.filters.status);
+  const {key, dir} = ui.sort;
+  const val = a => key === 'rounds' ? a.rounds.length : key === 'match' ? (a.ai?.jd?.matchScore ?? -1) : key === 'status' ? SORDER[a.status] : String(a[key] || '').toLowerCase();
+  apps.sort((x, y) => { const A = val(x), B = val(y); return (A > B ? 1 : A < B ? -1 : 0) * dir; });
+  const extra = `<button class="btn btn-sm" data-act="export-csv">${icon('download', 15)} Export CSV</button>`;
+  if (!apps.length) { c.innerHTML = filtersBar(extra, true) + noMatch(); return; }
+  c.innerHTML = filtersBar(extra, true) + `<div class="table-wrap"><table>
+    <thead><tr>${LIST_COLS.map(([k, l]) => `<th aria-sort="${k === key ? (dir > 0 ? 'ascending' : 'descending') : 'none'}"><button data-act="sort" data-key="${k}">${l}${k === key ? (dir > 0 ? ' ↑' : ' ↓') : ''}</button></th>`).join('')}</tr></thead>
+    <tbody>${apps.map(a => `<tr data-act="open" data-id="${a.id}" tabindex="0">
+      <td><span class="cell-co">${logo(a.company)}${esc(a.company || '—')}</span></td>
+      <td>${esc(a.role || '—')}</td><td>${esc(a.location || '—')}</td><td>${esc(a.workMode || '—')}</td><td>${esc(a.source || '—')}</td>
+      <td>${pill(a.status)}</td><td>${fmtDate(a.appliedOn)}</td><td>${a.rounds.length || '—'}</td>
+      <td>${typeof a.ai?.jd?.matchScore === 'number' ? a.ai.jd.matchScore + '%' : '—'}</td><td>${rel(a.updatedAt)}</td></tr>`).join('')}</tbody>
+  </table></div><p class="hint" style="margin-top:10px">${plural(apps.length, 'application')}</p>`;
+}
+
+// ---------- drawer ----------
+function openDrawer(id, tab = 'overview') {
+  ui.openId = id; ui.tab = tab;
+  renderDrawer();
+  const d = $('#drawer');
+  d.classList.add('open'); d.setAttribute('aria-hidden', 'false'); $('#scrim').classList.add('open');
+  setTimeout(() => d.focus(), 60);
+}
+function closeDrawer() {
+  if (!ui.openId) return;
+  ui.openId = null;
+  const d = $('#drawer');
+  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); $('#scrim').classList.remove('open');
+  render();
+}
+const TABS = [['overview','Overview'],['jd','Job description'],['questions','Questionnaire'],['rounds','Rounds'],['ai','AI analysis']];
+function renderDrawer() {
+  const a = getApp(ui.openId); if (!a) { closeDrawer(); return; }
+  const prevScroll = $('#dbody')?.scrollTop || 0, sameTab = $('#drawer').dataset.tab === ui.tab && $('#drawer').dataset.id === a.id;
+  const count = {questions:a.questions.length, rounds:a.rounds.length};
+  $('#drawer').dataset.tab = ui.tab; $('#drawer').dataset.id = a.id;
+  $('#drawer').innerHTML = `<div class="d-head">
+    <div class="d-title">${logo(a.company, 'lg')}
+      <div class="grow"><input class="role" data-f="role" value="${esc(a.role)}" placeholder="Role / post" aria-label="Role"><input class="company" data-f="company" value="${esc(a.company)}" placeholder="Company" aria-label="Company"></div>
+      <button class="btn btn-ghost icon-only" data-act="delete" title="Delete application" aria-label="Delete application">${icon('trash')}</button>
+      <button class="btn btn-ghost icon-only" data-act="close" title="Close (Esc)" aria-label="Close">${icon('x')}</button>
+    </div>
+    <div class="d-sub"><span class="sel-wrap st-${a.status}"><select data-status aria-label="Status">${opts(STATUSES, a.status)}</select></span>
+      <span class="hint">Updated ${rel(a.updatedAt)}</span><span class="spacer"></span>
+      <button class="btn btn-ghost btn-sm" data-act="company-of">${icon('building', 15)} Company view</button></div>
+    <div class="tabs" role="tablist">${TABS.map(([t, l]) => `<button class="tab" role="tab" data-act="tab" data-tab="${t}" aria-selected="${t === ui.tab}">${l}${count[t] ? `<span class="count">${count[t]}</span>` : ''}${t === 'ai' && a.ai?.jd ? `<span class="count">${typeof a.ai.jd.matchScore === 'number' ? a.ai.jd.matchScore + '%' : 'done'}</span>` : ''}</button>`).join('')}</div>
+  </div><div class="d-body" id="dbody" role="tabpanel">${TAB_RENDER[ui.tab](a)}</div>`;
+  if (sameTab) $('#dbody').scrollTop = prevScroll;
+}
+const fld = (label, inner, cls = '') => `<label class="field ${cls}"><span>${label}</span>${inner}</label>`;
+const inp = (f, v, attrs = '') => `<input class="input" data-f="${f}" value="${esc(v)}" ${attrs}>`;
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+const TAB_RENDER = {
+  overview(a) {
+    const locs = [...new Set([...LOCS, ...db.apps.map(x => x.location).filter(Boolean)])];
+    return `<div class="grid2">
+      ${fld('Location', inp('location', a.location, 'list="locList" placeholder="City or Remote"'))}
+      ${fld('Work mode', `<select class="input" data-f="workMode"><option value="">Not set</option>${opts(MODES, a.workMode)}</select>`)}
+      ${fld('Source', inp('source', a.source, 'list="srcList" placeholder="Where you found it"'))}
+      <div class="field"><span class="lbl">Priority</span><div class="seg" role="group" aria-label="Priority">${[['high','High'],['med','Medium'],['low','Low']].map(([v, l]) => `<button data-act="seg" data-field="priority" data-v="${v}" aria-pressed="${a.priority === v}">${l}</button>`).join('')}</div></div>
+      ${fld('Applied on', inp('appliedOn', a.appliedOn, 'type="date"'))}
+      ${fld('Follow up on', inp('followUp', a.followUp, 'type="date"'))}
+      <label class="field full"><span>Job posting link</span><div class="input-row">${inp('jdUrl', a.jdUrl, 'type="url" placeholder="https://"')}<a class="btn" id="jdOpen" target="_blank" rel="noopener" href="${esc(safeUrl(a.jdUrl))}" ${safeUrl(a.jdUrl) ? '' : 'hidden'}>${icon('link', 16)} Open</a></div></label>
+      ${fld('Expected CTC', inp('salaryExpected', a.salaryExpected, 'placeholder="e.g. 40 LPA"'))}
+      ${fld('Offered CTC', inp('salaryOffered', a.salaryOffered, 'placeholder="Fill in when you get an offer"'))}
+      ${fld('Recruiter or contact', inp('recruiter', a.recruiter, 'placeholder="Name"'))}
+      ${fld('Contact details', inp('contact', a.contact, 'placeholder="Email, phone or LinkedIn"'))}
+      ${fld('Next step', inp('nextStep', a.nextStep, 'placeholder="e.g. Send portfolio link to recruiter"'), 'full')}
+      ${fld('Tags', inp('tags', a.tags, 'placeholder="Comma separated, e.g. react, dream company"'), 'full')}
+      ${fld('Notes', `<textarea class="input" data-f="notes" rows="5" placeholder="Anything worth remembering: team, tech stack, people you spoke to">${esc(a.notes)}</textarea>`, 'full')}
+    </div>
+    <datalist id="srcList">${sourcesInUse().map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <datalist id="locList">${locs.map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <section class="sec"><h3>Stage history</h3><ol class="hist">${a.history.map(h => `<li class="st-${h.status}">${esc(SLABEL[h.status] || h.status)}<span>${fmtDate(h.at)}${h.at ? ', ' + new Date(h.at).getFullYear() : ''}</span></li>`).join('')}</ol></section>`;
+  },
+  jd(a) {
+    const words = (a.jd || '').trim().split(/\s+/).filter(Boolean).length;
+    return `<div class="intro"><p>Paste the full job description. It powers the resume match, interview prep and the company report.</p>
+      <button class="btn btn-ai" data-act="ai-jd" ${a.jd ? '' : 'disabled title="Paste a job description first"'}>${icon('spark')} Analyze with Gemini</button></div>
+      <textarea class="input" data-f="jd" rows="20" placeholder="Paste the job description here">${esc(a.jd)}</textarea>
+      <p class="hint" id="jdWords" style="margin-top:6px">${plural(words, 'word')}</p>`;
+  },
+  questions(a) {
+    const used = new Set(a.questions.map(q => q.q.trim().toLowerCase()));
+    const quick = QUICK_Q.filter(q => !used.has(q.toLowerCase()));
+    return `<div class="intro"><p>Questions the application form asked, and what you answered. Keeping them here makes the next form faster.</p>
+      <div class="row"><button class="btn" data-act="add-q">${icon('plus', 16)} Add question</button>${a.questions.length ? `<button class="btn btn-ai" data-act="ai-q">${icon('spark')} Draft empty answers</button>` : ''}</div></div>
+      ${quick.length ? `<div class="quick" aria-label="Common questions">${quick.map(q => `<button data-act="add-q" data-text="${esc(q)}">${icon('plus', 13)} ${esc(q)}</button>`).join('')}</div>` : ''}
+      ${a.questions.map((q, i) => `<div class="qa">
+        <div class="qa-head"><span class="num">${i + 1}</span><textarea class="q" rows="1" data-q="${q.id}" data-qf="q" placeholder="Type the question" aria-label="Question ${i + 1}">${esc(q.q)}</textarea>
+          <button class="btn btn-ghost icon-only" data-act="del-q" data-id="${q.id}" aria-label="Delete question">${icon('trash', 16)}</button></div>
+        <textarea class="input a" rows="3" data-q="${q.id}" data-qf="a" id="ans-${q.id}" placeholder="Your answer" aria-label="Answer ${i + 1}">${esc(q.a)}</textarea>
+        <div class="row"><button class="btn btn-ai btn-sm" data-act="ai-q" data-id="${q.id}">${icon('spark', 15)} ${q.a ? 'Redraft' : 'Draft'} with Gemini</button><button class="btn btn-ghost btn-sm" data-act="copy-ans" data-id="${q.id}">${icon('copy', 15)} Copy answer</button></div>
+      </div>`).join('') || `<div class="ai-empty"><p>No questions yet. Use the shortcuts above or add your own.</p></div>`}`;
+  },
+  rounds(a) {
+    const done = a.rounds.filter(r => ['passed','failed'].includes(r.status)).length, cleared = a.rounds.filter(r => r.status === 'passed').length;
+    return `<div class="intro"><p>${a.rounds.length ? `${plural(a.rounds.length, 'round')} so far${done ? `, ${cleared} of ${done} cleared` : ''}. Rate how each felt and note what was asked; it feeds the company report.` : 'Log every interview round: what was asked, how it felt and the feedback you got.'}</p>
+      <button class="btn btn-primary" data-act="add-round">${icon('plus', 16)} Add round</button></div>
+      ${a.rounds.map((r, i) => `<div class="round">
+        <div class="round-head"><span class="num">${i + 1}</span><input class="rname" data-r="${r.id}" data-rf="name" value="${esc(r.name)}" placeholder="Round name, e.g. DSA round" aria-label="Round name">
+          <span class="sel-wrap rs-${r.status}"><select data-r="${r.id}" data-rf="status" aria-label="Round result">${opts(RSTAT, r.status)}</select></span>
+          <button class="btn btn-ghost icon-only" data-act="del-round" data-id="${r.id}" aria-label="Delete round">${icon('trash', 16)}</button></div>
+        <div class="grid4">
+          ${fld('Type', `<select class="input" data-r="${r.id}" data-rf="type">${opts(ROUND_TYPES, r.type)}</select>`)}
+          ${fld('Date', `<input class="input" type="date" data-r="${r.id}" data-rf="date" value="${esc(r.date)}">`)}
+          ${fld('Mode', `<select class="input" data-r="${r.id}" data-rf="mode">${opts(ROUND_MODES, r.mode)}</select>`)}
+          ${fld('Interviewer', `<input class="input" data-r="${r.id}" data-rf="interviewer" value="${esc(r.interviewer)}" placeholder="Name or role">`)}
+        </div>
+        <div class="field" style="margin-bottom:12px"><span class="lbl">How it felt</span><div class="stars" role="group" aria-label="How it felt">${[1,2,3,4,5].map(v => `<button class="star ${v <= (r.rating || 0) ? 'on' : ''}" data-act="rate" data-id="${r.id}" data-v="${v}" aria-label="${v} of 5" aria-pressed="${v === r.rating}">★</button>`).join('')}<span class="hint">${['Not rated','Rough','Below par','Okay','Good','Nailed it'][r.rating || 0]}</span></div></div>
+        <div class="grid2">
+          ${fld('Questions asked', `<textarea class="input" rows="3" data-r="${r.id}" data-rf="asked" placeholder="Topics and questions you remember">${esc(r.asked)}</textarea>`)}
+          ${fld('Feedback and notes', `<textarea class="input" rows="3" data-r="${r.id}" data-rf="notes" placeholder="What went well, what didn't, any feedback">${esc(r.notes)}</textarea>`)}
+        </div>
+      </div>`).join('')}`;
+  },
+  ai(a) { return aiTab(a); }
+};
+
+// ---------- AI tab ----------
+function aiTab(a) {
+  const s = db.settings, r = a.ai?.jd, busy = ui.busy['jd:' + a.id];
+  let head = '';
+  if (!s.apiKey) head = `<div class="callout"><p>Add your Gemini API key in Settings to analyze this job.</p><button class="btn" data-act="goto-settings">Open settings</button></div>`;
+  else if (!a.jd) head = `<div class="callout"><p>Paste the job description first. The analysis compares it with your resume.</p><button class="btn" data-act="tab" data-tab="jd">Add job description</button></div>`;
+  else if (!s.resume) head = `<div class="callout"><p>Add your resume in Settings to get a match score and your skill gaps.</p><button class="btn" data-act="goto-settings">Add resume</button></div>`;
+  if (busy) return head + `<div class="panel"><div class="row"><span class="spin"></span><b>Gemini is reading the job description</b></div><div class="skel" style="margin-top:12px"><i style="width:92%"></i><i style="width:74%"></i><i style="width:84%"></i><i style="width:58%"></i></div></div>`;
+  if (!r) return head + `<div class="ai-empty">${icon('spark', 28)}<p>Get a resume match score, the skills you're missing, ATS keywords to tailor your resume, and the questions you're likely to face.</p><button class="btn btn-ai" data-act="ai-jd" ${s.apiKey && a.jd ? '' : 'disabled'}>${icon('spark')} Analyze with Gemini</button></div>`;
+  const score = typeof r.matchScore === 'number' ? Math.max(0, Math.min(100, Math.round(r.matchScore))) : null;
+  const rc = score == null ? 'var(--line)' : score >= 70 ? 'var(--ok)' : score >= 50 ? 'var(--mari-bright)' : 'var(--bad)';
+  const chips = (arr, cls) => arr && arr.length ? `<div class="chips">${arr.map(x => `<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>` : '<p class="hint">None found.</p>';
+  const ul = (arr, tag = 'ul') => arr && arr.length ? `<${tag}>${arr.map(x => `<li>${esc(x)}</li>`).join('')}</${tag}>` : '<p class="hint">None found.</p>';
+  return head + `<div class="ai-hero"><div class="ring" style="--p:${score ?? 0};--rc:${rc}"><b>${score == null ? '—' : score + '%'}</b></div>
+    <div class="grow"><h3>${score == null ? 'What this role is about' : 'Resume match'}</h3><p>${esc(r.summary)}</p>${r.seniority ? `<p class="hint" style="margin-top:6px">Seniority: ${esc(r.seniority)}</p>` : ''}</div>
+    <button class="btn btn-sm" data-act="ai-jd">${icon('spark', 15)} Run again</button></div>
+  <div class="ai-grid">
+    <div class="panel"><h4>Skills you match</h4>${chips(r.matchedSkills, 'ok')}</div>
+    <div class="panel"><h4>Gaps to address</h4>${chips(r.missingSkills, 'bad')}</div>
+    <div class="panel"><h4>Must have</h4>${ul(r.mustHave)}</div>
+    <div class="panel"><h4>Nice to have</h4>${ul(r.niceToHave)}</div>
+    <div class="panel wide"><h4>ATS keywords for your resume<button class="btn btn-ghost btn-sm" data-act="copy-text" data-text="${esc((r.atsKeywords || []).join(', '))}">${icon('copy', 15)} Copy all</button></h4>${chips(r.atsKeywords, 'kw')}</div>
+    <div class="panel wide"><h4>Questions you're likely to be asked</h4>${ul(r.likelyQuestions, 'ol')}</div>
+    <div class="panel"><h4>Red flags</h4>${ul(r.redFlags)}</div>
+    <div class="panel"><h4>How to tailor your application</h4>${ul(r.tips)}</div>
+  </div><p class="hint" style="margin-top:10px">Analyzed ${rel(a.ai.at)} with ${esc(a.ai.model || 'Gemini')}.</p>`;
+}
+
+// ---------- Gemini ----------
+async function gemini(prompt, {json = false, temperature = 0.4} = {}) {
+  const s = db.settings;
+  if (!s.apiKey) throw new Error('Add your Gemini API key in Settings first.');
+  const model = (s.model || 'gemini-2.5-flash').trim().replace(/^models\//, '');
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'x-goog-api-key':s.apiKey.trim()},
+    body:JSON.stringify({contents:[{role:'user', parts:[{text:prompt}]}], generationConfig:{temperature, ...(json ? {responseMimeType:'application/json'} : {})}})
+  });
+  let data;
+  try { data = await res.json(); } catch { throw new Error(`Gemini sent an unreadable response (HTTP ${res.status}).`); }
+  if (!res.ok) throw new Error('Gemini: ' + (data?.error?.message || `request failed (HTTP ${res.status})`));
+  const cand = data.candidates?.[0];
+  const text = (cand?.content?.parts || []).filter(p => !p.thought).map(p => p.text || '').join('').trim();
+  if (!text) throw new Error(cand?.finishReason ? `Gemini returned no text (reason: ${cand.finishReason}).` : 'Gemini returned an empty response.');
+  if (!json) return text;
+  try { return JSON.parse(text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')); }
+  catch { throw new Error('Gemini returned malformed JSON. Run it again.'); }
+}
+async function listModels() {
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {headers:{'x-goog-api-key':db.settings.apiKey.trim()}});
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error('Gemini: ' + (d?.error?.message || `HTTP ${res.status}`));
+  return (d.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /gemini/i.test(m.name)).map(m => ({id:m.name.replace(/^models\//, ''), label:m.displayName || m.name}));
+}
+function aiError(e) {
+  toast(e instanceof TypeError ? "Couldn't reach Gemini. Check your connection, and open this tracker from the downloaded file rather than a hosted link." : e.message, {ms:9000});
+}
+function busyBtn(btn, label) { if (!btn) return; btn.disabled = true; btn.innerHTML = `<span class="spin"></span>${esc(label)}`; }
+const resumeBlock = (max = 12000) => `Candidate target roles: ${db.settings.targetRole || 'not specified'}\nCANDIDATE RESUME:\n${db.settings.resume ? db.settings.resume.slice(0, max) : '(not provided)'}`;
+const md = s => {
+  if (window.marked && window.DOMPurify) return DOMPurify.sanitize(marked.parse(String(s || '')));
+  return esc(s).replace(/^#{1,3} (.*)$/gm, '<h3>$1</h3>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^\s*(?:[-*]|\d+\.) (.*)$/gm, '<li>$1</li>').replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+};
+
+async function aiJD(a) {
+  const k = 'jd:' + a.id;
+  if (ui.busy[k]) return;
+  if (!db.settings.apiKey) { toast('Add your Gemini API key in Settings first.'); return; }
+  if (!a.jd.trim()) { toast('Paste the job description first.'); return; }
+  ui.busy[k] = true; ui.tab = 'ai';
+  if (ui.openId === a.id) renderDrawer();
+  try {
+    const hasResume = !!db.settings.resume.trim();
+    const res = await gemini(`You are an expert technical recruiter and ATS specialist. Analyze the job description${hasResume ? ' and compare it with the candidate resume' : ''}.
+Return only a JSON object with these keys:
+"summary": 2-3 sentences on what the role really involves,
+"seniority": short string,
+"matchScore": ${hasResume ? 'integer 0-100 for how well the resume fits the role' : 'null (no resume was provided)'},
+"mustHave": array of required skills and qualifications,
+"niceToHave": array,
+"matchedSkills": array of JD skills the resume clearly demonstrates,
+"missingSkills": array of JD skills missing or weak in the resume,
+"atsKeywords": array of 15-25 exact keywords and phrases to work into the resume,
+"likelyQuestions": array of 6-10 interview questions specific to this role,
+"redFlags": array of concerns in the JD (may be empty),
+"tips": array of 3-5 concrete ways to tailor the application.
+Be honest; do not inflate the score.
+
+ROLE: ${a.role} at ${a.company} (${a.location || 'location not given'})
+${resumeBlock()}
+
+JOB DESCRIPTION:
+${a.jd.slice(0, 20000)}`, {json:true, temperature:0.3});
+    a.ai = {jd:res, at:nowISO(), model:db.settings.model};
+    touch(a);
+    toast(`Analysis ready for ${a.role || 'this role'}.`);
+  } catch (e) { aiError(e); }
+  finally { delete ui.busy[k]; if (ui.openId === a.id) renderDrawer(); renderSoon(); }
+}
+
+async function aiQuestions(a, id, btn) {
+  if (!db.settings.apiKey) { toast('Add your Gemini API key in Settings first.'); return; }
+  const qs = (id ? a.questions.filter(q => q.id === id) : a.questions.filter(q => !q.a.trim())).filter(q => q.q.trim());
+  if (!qs.length) { toast(id ? 'Type the question first.' : 'Every question already has an answer.'); return; }
+  busyBtn(btn, 'Drafting');
+  try {
+    const res = await gemini(`You help a job candidate answer application-form questions. Write in first person; be concise (1-4 sentences unless the question needs more), honest and specific, using only facts from the resume and context. Where a fact is unknown (CTC, notice period, dates), use a short placeholder in square brackets such as [X LPA].
+Return only JSON: {"answers":[{"id":"<question id>","answer":"<answer>"}]}
+
+APPLYING FOR: ${a.role} at ${a.company}
+${resumeBlock()}
+JOB DESCRIPTION (excerpt):
+${(a.jd || '').slice(0, 6000) || '(not provided)'}
+ANSWERS ALREADY GIVEN ON THIS FORM: ${JSON.stringify(a.questions.filter(q => q.a.trim() && !qs.includes(q)).map(q => ({q:q.q, a:q.a})).slice(0, 10))}
+
+QUESTIONS:
+${JSON.stringify(qs.map(q => ({id:q.id, question:q.q})))}`, {json:true, temperature:0.5});
+    const arr = Array.isArray(res) ? res : (res.answers || []);
+    let n = 0;
+    arr.forEach(x => { const q = a.questions.find(q => q.id === x.id); if (q && x.answer) { q.a = String(x.answer).trim(); n++; } });
+    touch(a);
+    toast(n ? `Drafted ${plural(n, 'answer')}. Review before you use ${n === 1 ? 'it' : 'them'}.` : 'Gemini returned no answers. Run it again.');
+  } catch (e) { aiError(e); }
+  finally { if (ui.openId === a.id) renderDrawer(); }
+}
+
+async function aiFill(btn) {
+  const jd = $('#addJd').value.trim(), err = $('#addErr');
+  if (!jd) { err.textContent = 'Paste a job description first.'; $('#addJd').focus(); return; }
+  if (!db.settings.apiKey) { err.textContent = 'Add your Gemini API key in Settings to fill fields automatically.'; return; }
+  const orig = btn.innerHTML; busyBtn(btn, 'Reading');
+  try {
+    const r = await gemini(`Extract details from this job posting. Return only JSON with keys "company", "role", "location", "workMode" (one of "Onsite", "Hybrid", "Remote", or ""), "salary" (string or ""). Use "" when not stated.\n\nJOB POSTING:\n${jd.slice(0, 15000)}`, {json:true, temperature:0.1});
+    const set = (sel, v) => { const el = $(sel); if (v && !el.value.trim()) el.value = v; };
+    set('#addCompany', r.company); set('#addRole', r.role); set('#addLoc', r.location);
+    if (MODES.includes(r.workMode) && !$('#addMode').value) $('#addMode').value = r.workMode;
+    ui.addSalary = r.salary || '';
+    err.textContent = '';
+    toast('Filled in from the job description. Check the details, then add it.');
+  } catch (e) { aiError(e); }
+  finally { btn.disabled = false; btn.innerHTML = orig; }
+}
+
+// ---------- add & outcome dialogs ----------
+const fldId = (l, id, attrs = '') => `<label class="field"><span>${l}</span><input class="input" id="${id}" ${attrs}></label>`;
+function openAdd(status = 'applied') {
+  const d = $('#addDlg'), hasKey = !!db.settings.apiKey;
+  ui.addDup = false; ui.addSalary = '';
+  d.innerHTML = `<div class="dlg-head"><h2 id="addTitle">Add application</h2><p class="hint">Company and role are enough to start. Fill in the rest any time.</p></div>
+  <div class="dlg-body">
+    <details class="paste" ${hasKey ? 'open' : ''}><summary>${icon('spark')} Paste a job description to fill this in</summary>
+      <textarea class="input" id="addJd" rows="5" placeholder="Paste the job description"></textarea>
+      <div class="row wrap"><button class="btn btn-ai btn-sm" data-act="fill">${icon('spark', 15)} Fill with Gemini</button><span class="hint">${hasKey ? 'The description is saved with the application.' : 'Needs a Gemini API key in Settings. The description is still saved.'}</span></div>
+    </details>
+    <div class="grid2">
+      ${fldId('Company', 'addCompany', 'placeholder="e.g. Kestrel Cloud" autocomplete="off"')}
+      ${fldId('Role / post', 'addRole', 'placeholder="e.g. Senior Frontend Engineer" autocomplete="off"')}
+      ${fldId('Location', 'addLoc', 'list="addLocList" placeholder="City or Remote"')}
+      <label class="field"><span>Work mode</span><select class="input" id="addMode"><option value="">Not set</option>${opts(MODES, '')}</select></label>
+      ${fldId('Source', 'addSrc', 'list="addSrcList" placeholder="LinkedIn, Naukri, referral"')}
+      <label class="field"><span>Stage</span><select class="input" id="addStatus">${opts(STATUSES.filter(([s]) => !CLOSED.includes(s)), COLOF[status] === 'closed' ? 'applied' : status)}</select></label>
+      <label class="field full"><span>Job posting link</span><input class="input" id="addUrl" type="url" placeholder="https://"></label>
+    </div>
+    <datalist id="addLocList">${[...new Set([...LOCS, ...db.apps.map(x => x.location).filter(Boolean)])].map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <datalist id="addSrcList">${sourcesInUse().map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <p class="err" id="addErr" role="alert"></p>
+  </div>
+  <div class="dlg-foot"><button class="btn" data-act="dlg-cancel">Cancel</button><button class="btn btn-primary" data-act="add-save">Add application</button></div>`;
+  d.showModal();
+  setTimeout(() => $(hasKey ? '#addJd' : '#addCompany').focus(), 30);
+}
+function saveAdd() {
+  const company = $('#addCompany').value.trim(), role = $('#addRole').value.trim(), err = $('#addErr');
+  if (!company || !role) { err.textContent = 'Add a company and a role to save.'; (company ? $('#addRole') : $('#addCompany')).focus(); return; }
+  const dup = db.apps.find(a => coKey(a.company) === coKey(company) && a.role.trim().toLowerCase() === role.toLowerCase());
+  if (dup && !ui.addDup) { ui.addDup = true; err.textContent = `You already track ${dup.role} at ${dup.company} (${SLABEL[dup.status]}). Select Add application again to add it anyway.`; return; }
+  const a = createApp({company, role, location:$('#addLoc').value.trim(), workMode:$('#addMode').value, source:$('#addSrc').value.trim(), status:$('#addStatus').value, jdUrl:$('#addUrl').value.trim(), jd:$('#addJd').value.trim(), notes:ui.addSalary ? `Salary in posting: ${ui.addSalary}` : ''});
+  $('#addDlg').close();
+  render(); openDrawer(a.id);
+  toast(`Added ${role} at ${company}.`);
+}
+function openOutcome(id) {
+  ui.pendingOutcome = id;
+  const d = $('#outcomeDlg');
+  d.innerHTML = `<div class="dlg-head"><h2 id="outTitle">How did it end?</h2><p class="hint">Closed applications still count in your insights.</p></div>
+  <div class="dlg-body"><div class="outcomes">${[['rejected','Rejected'],['withdrawn','I withdrew'],['ghosted','No response']].map(([s, l]) => `<button class="st-${s}" data-act="outcome" data-v="${s}">${l}</button>`).join('')}</div></div>
+  <div class="dlg-foot"><button class="btn" data-act="dlg-cancel">Cancel</button></div>`;
+  d.showModal();
+}
+
+// ---------- charts ----------
+function mkChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!window.Chart) { el.parentElement.innerHTML = '<p class="hint pad">Charts need an internet connection when the page loads.</p>'; return; }
+  Chart.defaults.font.family = "'Figtree', system-ui, sans-serif";
+  Chart.defaults.color = css('--ink-2');
+  Chart.defaults.borderColor = css('--line');
+  const base = {responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{usePointStyle:true, boxWidth:8, boxHeight:8, padding:14}}}};
+  cfg.options = {...base, ...(cfg.options || {}), plugins:{...base.plugins, ...((cfg.options || {}).plugins || {})}};
+  charts.push(new Chart(el, cfg));
+}
+const palette = n => Array.from({length:n}, (_, i) => `hsl(${(272 + i * 47) % 360} 50% ${isDark() ? 62 : 50}%)`);
+
+// ---------- companies ----------
+function companyGroups(apps) {
+  const m = new Map();
+  apps.forEach(a => { const k = coKey(a.company); if (!m.has(k)) m.set(k, {key:k, apps:[]}); m.get(k).apps.push(a); });
+  return [...m.values()].map(g => {
+    g.apps.sort((x, y) => y.updatedAt.localeCompare(x.updatedAt));
+    g.name = g.apps[0].company || 'No company';
+    g.best = [...g.apps].sort((x, y) => (isActive(y) - isActive(x)) || (reached(y) - reached(x)))[0];
+    g.last = g.apps[0].updatedAt;
+    return g;
+  }).sort((x, y) => y.last.localeCompare(x.last));
+}
+const groupRounds = g => g.apps.flatMap(a => a.rounds.map(r => ({...r, app:a}))).filter(r => r.status !== 'cancelled').sort((x, y) => (x.date || '9999').localeCompare(y.date || '9999'));
+function renderCompanies(c) {
+  if (!db.apps.length) { c.innerHTML = emptyState(); return; }
+  const groups = companyGroups(visibleApps());
+  if (!groups.length) { c.innerHTML = filtersBar() + noMatch(); return; }
+  if (!groups.find(g => g.key === ui.company)) ui.company = groups[0].key;
+  const g = groups.find(g => g.key === ui.company);
+  c.innerHTML = filtersBar() + `<div class="co-layout">
+    <div class="co-list" role="list" aria-label="Companies">${groups.map(x => `<button class="co-item" role="listitem" data-act="co" data-key="${esc(x.key)}" ${x.key === g.key ? 'aria-current="true"' : ''}>${logo(x.name)}<span class="grow"><span class="nm">${esc(x.name)}</span><span class="s">${plural(x.apps.length, 'application')}, ${esc(SLABEL[x.best.status])}</span></span></button>`).join('')}</div>
+    <div class="co-detail">${companyDetail(g)}</div></div>`;
+  drawCompanyCharts(g);
+}
+function companyDetail(g) {
+  const rounds = groupRounds(g);
+  const done = rounds.filter(r => ['passed','failed'].includes(r.status)).length, cleared = rounds.filter(r => r.status === 'passed').length;
+  const rated = rounds.filter(r => r.rating > 0);
+  const avg = rated.length ? (rated.reduce((s, r) => s + Number(r.rating), 0) / rated.length).toFixed(1) : '—';
+  const starts = g.apps.map(a => a.appliedOn || a.createdAt.slice(0, 10)).sort();
+  const allClosed = g.apps.every(a => !isActive(a));
+  const end = allClosed ? g.apps.map(a => a.updatedAt.slice(0, 10)).sort().pop() : todayISO();
+  const span = Math.max(0, diffDays(starts[0], end));
+  const locs = [...new Set(g.apps.map(a => a.location).filter(Boolean))].join(', ');
+  const rep = db.reports.companies[g.key];
+  return `<div class="panel">
+    <div class="co-head">${logo(g.name, 'lg')}<div class="grow"><h2>${esc(g.name)}</h2><p class="hint">${locs ? esc(locs) : 'Location not set'}</p></div>
+      <button class="btn btn-ai no-print" data-act="ai-company" data-key="${esc(g.key)}">${icon('spark')} ${rep ? 'Refresh report' : 'Generate report'}</button></div>
+    <div class="mini-stats"><div><b>${g.apps.length}</b><span>${g.apps.length === 1 ? 'Application' : 'Applications'}</span></div><div><b>${rounds.length}</b><span>Rounds</span></div><div><b>${done ? `${cleared}/${done}` : '—'}</b><span>Rounds cleared</span></div><div><b>${avg}</b><span>How rounds felt, of 5</span></div><div><b>${span}</b><span>Days in process</span></div></div>
+  </div>
+  <div class="charts">
+    <div class="panel"><h3>How each round felt</h3><p class="sub">Your own rating after each round</p><div class="chart-box">${rated.length ? '<canvas id="coRating" aria-label="Round ratings chart"></canvas>' : '<p class="hint pad">Rate rounds inside an application to see this.</p>'}</div></div>
+    <div class="panel"><h3>Round results</h3><p class="sub">Cleared, not cleared and still pending</p><div class="chart-box">${rounds.length ? '<canvas id="coOutcome" aria-label="Round results chart"></canvas>' : '<p class="hint pad">No rounds logged yet.</p>'}</div></div>
+  </div>
+  <div class="panel"><h3>Applications</h3><div class="co-apps">${g.apps.map(a => `<button class="co-app" data-act="open" data-id="${a.id}"><span class="grow"><b>${esc(a.role || 'Untitled role')}</b><span class="hint">${a.appliedOn ? 'Applied ' + fmtDate(a.appliedOn) : 'Not applied yet'}${a.source ? ' via ' + esc(a.source) : ''}</span></span>${pill(a.status)}</button>`).join('')}</div></div>
+  ${rounds.length ? `<div class="panel"><h3>Interview timeline</h3><ol class="tl">${rounds.map(r => `<li class="rs-${r.status}"><div class="tl-date">${r.date ? fmtDate(r.date) : 'No date'}</div><div><b>${esc(r.name || r.type || 'Round')}</b><span class="rpill">${esc(RSLABEL[r.status])}</span><p class="hint">${esc(r.app.role)}${r.type ? ', ' + esc(r.type) : ''}${r.rating ? `, felt ${r.rating}/5` : ''}</p>${r.notes ? `<p class="tl-note">${esc(r.notes)}</p>` : ''}</div></li>`).join('')}</ol></div>` : ''}
+  <div class="panel report"><div class="row between wrap"><h3>Report</h3>${rep ? `<div class="row no-print"><span class="hint">Generated ${rel(rep.at)}</span><button class="btn btn-sm" data-act="print">${icon('print', 15)} Print or save PDF</button></div>` : ''}</div>
+    ${rep ? `<div class="md">${md(rep.md)}</div>` : `<div class="ai-empty">${icon('spark', 28)}<p>Gemini reads the job description, rounds, your ratings, notes and feedback for ${esc(g.name)}, then writes what went well, what to work on and how to prepare next.</p><button class="btn btn-ai" data-act="ai-company" data-key="${esc(g.key)}">${icon('spark')} Generate report</button></div>`}
+  </div>`;
+}
+function drawCompanyCharts(g) {
+  const rounds = groupRounds(g), rated = rounds.filter(r => r.rating > 0);
+  mkChart('coRating', {type:'line', data:{labels:rated.map((r, i) => `${i + 1}. ${r.name || r.type || 'Round'}`), datasets:[{label:'How it felt', data:rated.map(r => +r.rating), borderColor:css('--plum'), backgroundColor:css('--plum-soft'), fill:true, tension:.3, pointRadius:5, pointBackgroundColor:rated.map(r => css(r.status === 'passed' ? '--ok' : r.status === 'failed' ? '--bad' : '--mari-bright'))}]},
+    options:{plugins:{legend:{display:false}}, scales:{y:{min:0, max:5, ticks:{stepSize:1}}, x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:true}}}}});
+  const cnt = s => rounds.filter(r => s.includes(r.status)).length;
+  mkChart('coOutcome', {type:'doughnut', data:{labels:['Cleared','Not cleared','Pending'], datasets:[{data:[cnt(['passed']), cnt(['failed']), cnt(['scheduled','awaiting'])], backgroundColor:[css('--ok'), css('--bad'), css('--mari-bright')], borderColor:css('--surface'), borderWidth:3}]}, options:{cutout:'64%', plugins:{legend:{position:'bottom'}}}});
+}
+async function aiCompany(key, btn) {
+  if (!db.settings.apiKey) { toast('Add your Gemini API key in Settings first.'); return; }
+  const g = companyGroups(db.apps).find(x => x.key === key);
+  if (!g) return;
+  busyBtn(btn, 'Writing report');
+  const data = g.apps.map(a => ({role:a.role, location:a.location, workMode:a.workMode, source:a.source, currentStatus:SLABEL[a.status], appliedOn:a.appliedOn, stageHistory:a.history.map(h => `${SLABEL[h.status]} on ${h.at.slice(0, 10)}`), expectedCTC:a.salaryExpected, offeredCTC:a.salaryOffered, nextStep:a.nextStep, notes:a.notes, jdAnalysis:a.ai?.jd ? {matchScore:a.ai.jd.matchScore, missingSkills:a.ai.jd.missingSkills} : null, jobDescription:(a.jd || '').slice(0, 3500), rounds:a.rounds.map(r => ({name:r.name, type:r.type, date:r.date, result:RSLABEL[r.status], selfRating:r.rating || null, questionsAsked:r.asked, feedbackAndNotes:r.notes})), screeningQuestions:a.questions.map(q => ({q:q.q, answer:q.a}))}));
+  try {
+    const text = await gemini(`You are an experienced career coach. Write a concise report on the candidate's application(s) at ${g.name}. Use only the data provided; when something is missing, say so rather than inventing it. Today is ${todayISO()}.
+Use Markdown with these sections:
+## Snapshot
+(2-3 sentences on where things stand)
+## Round by round
+## Strengths you showed
+## Gaps to work on
+## Prep plan
+(specific topics to revise and questions to prepare for the next round or a similar company)
+## Follow-up
+(whether and when to follow up, with a short draft message if useful)
+Keep it under 450 words.
+
+${resumeBlock(5000)}
+
+DATA:
+${JSON.stringify(data)}`, {temperature:0.5});
+    db.reports.companies[key] = {md:text, at:nowISO()};
+    markMeta(); save(); toast(`Report ready for ${g.name}.`);
+  } catch (e) { aiError(e); }
+  finally { render(); }
+}
+
+// ---------- insights ----------
+function inRange(apps) {
+  if (ui.range === 'all') return apps;
+  const cut = day(daysAgo(+ui.range));
+  return apps.filter(a => (a.appliedOn || a.createdAt.slice(0, 10)) >= cut);
+}
+function weekStart(d) { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+function computeStats(apps) {
+  const applied = apps.filter(a => reached(a) >= 1);
+  const rts = applied.map(firstResponseDays).filter(x => x != null);
+  const s = {
+    applied:applied.length,
+    active:apps.filter(isActive).length,
+    responded:applied.filter(responded).length,
+    interviews:applied.filter(a => reached(a) >= 3).length,
+    offers:applied.filter(a => reached(a) >= 4).length,
+    avgRT:rts.length ? Math.round(rts.reduce((t, x) => t + x, 0) / rts.length) : null,
+    funnel:[1, 2, 3, 4].map(r => applied.filter(a => reached(a) >= r).length)
+  };
+  const dates = applied.map(a => a.appliedOn).filter(Boolean).sort();
+  let n = ui.range === '30' ? 5 : ui.range === '90' ? 13 : 8;
+  if (ui.range === 'all' && dates.length) n = Math.min(26, Math.max(8, Math.ceil(diffDays(day(weekStart(toDate(dates[0]))), todayISO()) / 7) + 1));
+  const start = weekStart(new Date()), weeks = [];
+  for (let i = n - 1; i >= 0; i--) { const d = new Date(start); d.setDate(d.getDate() - 7 * i); weeks.push(d); }
+  s.weekLabels = weeks.map(w => fmtDate(day(w)));
+  s.weekly = weeks.map(w => { const nx = new Date(w); nx.setDate(nx.getDate() + 7); return applied.filter(a => { const d = toDate(a.appliedOn); return d && d >= w && d < nx; }).length; });
+  s.src = {};
+  applied.forEach(a => { const k = a.source || 'Not set'; const o = s.src[k] || (s.src[k] = {applied:0, responded:0, interviews:0, offers:0}); o.applied++; if (responded(a)) o.responded++; if (reached(a) >= 3) o.interviews++; if (reached(a) >= 4) o.offers++; });
+  s.byStatus = {}; apps.forEach(a => { s.byStatus[a.status] = (s.byStatus[a.status] || 0) + 1; });
+  s.rtype = {};
+  apps.forEach(a => a.rounds.forEach(r => { if (r.status === 'cancelled') return; const k = r.type || 'Other'; const o = s.rtype[k] || (s.rtype[k] = {cleared:0, notCleared:0, pending:0}); if (r.status === 'passed') o.cleared++; else if (r.status === 'failed') o.notCleared++; else o.pending++; }));
+  s.loc = {}; apps.forEach(a => { const k = a.location || 'Not set'; s.loc[k] = (s.loc[k] || 0) + 1; });
+  s.mode = {}; apps.forEach(a => { const k = a.workMode || 'Not set'; s.mode[k] = (s.mode[k] || 0) + 1; });
+  return s;
+}
+const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
+function renderInsights(c) {
+  if (!db.apps.length) { c.innerHTML = emptyState(); return; }
+  const apps = inRange(db.apps), s = computeStats(apps), rep = db.reports.pipeline;
+  const hasRounds = Object.keys(s.rtype).length > 0;
+  c.innerHTML = `<div class="filters"><div class="seg" role="group" aria-label="Time range">${[['30','Last 30 days'],['90','Last 90 days'],['all','All time']].map(([v, l]) => `<button data-act="range" data-v="${v}" aria-pressed="${ui.range === v}">${l}</button>`).join('')}</div>
+    <span class="spacer"></span><button class="btn no-print" data-act="print">${icon('print', 16)} Print or save PDF</button><button class="btn btn-ai no-print" data-act="ai-pipeline">${icon('spark')} ${rep ? 'Refresh AI insights' : 'Get AI insights'}</button></div>
+  ${apps.length ? '' : '<p class="hint" style="margin-bottom:14px">No applications in this period yet.</p>'}
+  <div class="kpis">${kpi(s.applied, 'Applied')}${kpi(s.active, 'Active now')}${kpi(pct(s.responded, s.applied), 'Got a response')}${kpi(pct(s.interviews, s.applied), 'Reached interviews')}${kpi(s.offers, s.offers === 1 ? 'Offer' : 'Offers')}${kpi(s.avgRT == null ? '—' : s.avgRT + (s.avgRT === 1 ? ' day' : ' days'), 'Average time to first reply')}</div>
+  <div class="charts">
+    <div class="panel"><h3>Funnel</h3><p class="sub">How many applications reached each stage</p><div class="chart-box"><canvas id="chFunnel" aria-label="Funnel chart"></canvas></div></div>
+    <div class="panel"><h3>Applications per week</h3><p class="sub">Week starting</p><div class="chart-box"><canvas id="chWeekly" aria-label="Weekly applications chart"></canvas></div></div>
+    <div class="panel wide"><h3>Which sources pay off</h3><p class="sub">Applications from each source and how far they got</p><div class="chart-box"><canvas id="chSource" aria-label="Source performance chart"></canvas></div></div>
+    <div class="panel"><h3>Where things stand</h3><p class="sub">Current stage of every application</p><div class="chart-box"><canvas id="chStatus" aria-label="Status chart"></canvas></div></div>
+    <div class="panel"><h3>Rounds by type</h3><p class="sub">Which kinds of rounds you clear</p><div class="chart-box">${hasRounds ? '<canvas id="chRounds" aria-label="Rounds by type chart"></canvas>' : '<p class="hint pad">Log interview rounds to see this.</p>'}</div></div>
+    <div class="panel"><h3>Locations</h3><p class="sub">Where you are applying</p><div class="chart-box"><canvas id="chLoc" aria-label="Locations chart"></canvas></div></div>
+    <div class="panel"><h3>Work mode</h3><p class="sub">Onsite, hybrid and remote</p><div class="chart-box"><canvas id="chMode" aria-label="Work mode chart"></canvas></div></div>
+  </div>
+  <div class="panel report"><div class="row between wrap"><h3>AI insights</h3>${rep ? `<span class="hint">Generated ${rel(rep.at)} for ${rep.range === 'all' ? 'all time' : 'the last ' + rep.range + ' days'}</span>` : ''}</div>
+    ${rep ? `<div class="md">${md(rep.md)}</div>` : `<div class="ai-empty">${icon('spark', 28)}<p>Gemini looks across all your applications to spot which sources work, where you drop off, patterns in your interviews, and what to do this week.</p><button class="btn btn-ai" data-act="ai-pipeline">${icon('spark')} Get AI insights</button></div>`}
+  </div>`;
+  drawInsightCharts(s);
+}
+function drawInsightCharts(s) {
+  const noGrid = {grid:{display:false}};
+  mkChart('chFunnel', {type:'bar', data:{labels:['Applied','Screening','Interviewing','Offer'], datasets:[{data:s.funnel, backgroundColor:[css('--info'), css('--mari-bright'), css('--plum'), css('--ok')], borderRadius:6, barThickness:28}]}, options:{indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true, ticks:{precision:0}}, y:noGrid}}});
+  mkChart('chWeekly', {type:'bar', data:{labels:s.weekLabels, datasets:[{label:'Applications', data:s.weekly, backgroundColor:css('--plum'), borderRadius:5, maxBarThickness:28}]}, options:{plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}, x:noGrid}}});
+  const srcs = Object.entries(s.src).sort((x, y) => y[1].applied - x[1].applied);
+  mkChart('chSource', {type:'bar', data:{labels:srcs.map(x => x[0]), datasets:[['applied','Applied','--info'],['responded','Got a response','--mari-bright'],['interviews','Reached interviews','--plum'],['offers','Offers','--ok']].map(([k, l, c]) => ({label:l, data:srcs.map(x => x[1][k]), backgroundColor:css(c), borderRadius:4, maxBarThickness:22}))}, options:{scales:{y:{beginAtZero:true, ticks:{precision:0}}, x:noGrid}}});
+  const st = STATUSES.filter(([k]) => s.byStatus[k]);
+  mkChart('chStatus', {type:'doughnut', data:{labels:st.map(x => x[1]), datasets:[{data:st.map(([k]) => s.byStatus[k]), backgroundColor:st.map(([k]) => css(SCOLOR[k])), borderColor:css('--surface'), borderWidth:3}]}, options:{cutout:'62%', plugins:{legend:{position:'right'}}}});
+  const rt = Object.entries(s.rtype);
+  mkChart('chRounds', {type:'bar', data:{labels:rt.map(x => x[0]), datasets:[['cleared','Cleared','--ok'],['notCleared','Not cleared','--bad'],['pending','Pending','--mari-bright']].map(([k, l, c]) => ({label:l, data:rt.map(x => x[1][k]), backgroundColor:css(c), borderRadius:3, maxBarThickness:30}))}, options:{scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, beginAtZero:true, ticks:{precision:0}}}}});
+  const loc = Object.entries(s.loc).sort((x, y) => y[1] - x[1]);
+  const top = loc.slice(0, 6); if (loc.length > 6) top.push(['Other', loc.slice(6).reduce((t, x) => t + x[1], 0)]);
+  mkChart('chLoc', {type:'doughnut', data:{labels:top.map(x => x[0]), datasets:[{data:top.map(x => x[1]), backgroundColor:palette(top.length), borderColor:css('--surface'), borderWidth:3}]}, options:{cutout:'62%', plugins:{legend:{position:'right'}}}});
+  const md_ = Object.entries(s.mode);
+  const mc = {Onsite:'--info', Hybrid:'--plum', Remote:'--ok', 'Not set':'--gray'};
+  mkChart('chMode', {type:'doughnut', data:{labels:md_.map(x => x[0]), datasets:[{data:md_.map(x => x[1]), backgroundColor:md_.map(x => css(mc[x[0]] || '--gray')), borderColor:css('--surface'), borderWidth:3}]}, options:{cutout:'62%', plugins:{legend:{position:'right'}}}});
+}
+async function aiPipeline(btn) {
+  if (!db.settings.apiKey) { toast('Add your Gemini API key in Settings first.'); return; }
+  const apps = inRange(db.apps);
+  if (!apps.length) { toast('No applications in this period to analyze.'); return; }
+  busyBtn(btn, 'Analyzing');
+  const s = computeStats(apps);
+  const data = {period:ui.range === 'all' ? 'all time' : `last ${ui.range} days`, today:todayISO(),
+    totals:{tracked:apps.length, applied:s.applied, active:s.active, gotResponse:s.responded, reachedInterviews:s.interviews, offers:s.offers, avgDaysToFirstReply:s.avgRT},
+    bySource:s.src, byCurrentStatus:Object.fromEntries(Object.entries(s.byStatus).map(([k, v]) => [SLABEL[k], v])), byWorkMode:s.mode, byLocation:s.loc, roundsByType:s.rtype,
+    weeklyApplications:s.weekLabels.map((w, i) => ({weekOf:w, count:s.weekly[i]})),
+    applications:apps.slice(0, 60).map(a => ({company:a.company, role:a.role, status:SLABEL[a.status], source:a.source, location:a.location, workMode:a.workMode, appliedOn:a.appliedOn, daysSinceUpdate:diffDays(a.updatedAt.slice(0, 10), todayISO()), matchScore:a.ai?.jd?.matchScore ?? null, rounds:a.rounds.map(r => ({type:r.type, result:RSLABEL[r.status], selfRating:r.rating || null, feedback:(r.notes || '').slice(0, 200)})), nextStep:a.nextStep, followUpOn:a.followUp}))};
+  try {
+    const text = await gemini(`You are a sharp, practical career coach reviewing a candidate's job search. Use only the data provided, and say when there is too little data to conclude something.
+Use Markdown with these sections:
+## Where you stand
+## What's working
+## What isn't
+## Sources worth your time
+## Interview patterns
+## Your next 5 moves
+(numbered, concrete, naming companies where relevant)
+Keep it under 450 words.
+Candidate target roles: ${db.settings.targetRole || 'not specified'}
+
+DATA:
+${JSON.stringify(data)}`, {temperature:0.5});
+    db.reports.pipeline = {md:text, at:nowISO(), range:ui.range};
+    markMeta(); save(); toast('AI insights ready.');
+  } catch (e) { aiError(e); }
+  finally { render(); }
+}
+
+// ---------- settings ----------
+function renderSettings(c) {
+  const s = db.settings, hasSample = db.apps.some(a => a.sample);
+  c.innerHTML = `<div class="settings">
+  ${sheetPanel()}
+  <section class="panel"><h3>Gemini</h3><p class="sub">Powers job description analysis, answer drafts and reports. Your key stays in this browser (it is never written to the sheet) and is sent only to Google. Create one in <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.</p>
+    <div class="grid2">
+      <label class="field full"><span>API key</span><div class="input-row"><input class="input" id="sKey" type="password" data-s="apiKey" value="${esc(s.apiKey)}" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key"><button class="btn" data-act="toggle-key">Show</button></div></label>
+      <label class="field"><span>Model</span><input class="input" data-s="model" list="modelList" value="${esc(s.model)}" spellcheck="false"><datalist id="modelList">${(ui.models || []).map(m => `<option value="${esc(m.id)}">${esc(m.label)}</option>`).join('')}</datalist></label>
+      <div class="field"><span class="lbl">Check your setup</span><div class="row wrap"><button class="btn" data-act="load-models">Load my models</button><button class="btn" data-act="test-key">Test connection</button></div></div>
+    </div>
+    <p class="hint" id="keyStatus" role="status" style="margin-top:10px">${esc(ui.keyStatus)}</p></section>
+  <section class="panel"><h3>About you</h3><p class="sub">Used to score how well each job fits and to draft answers in your voice. Synced to the Profile tab of your sheet.</p>
+    <label class="field"><span>Roles you're targeting</span><input class="input" data-s="targetRole" value="${esc(s.targetRole)}" placeholder="e.g. Senior or Staff Frontend Engineer, Developer Experience Engineer"></label>
+    <label class="field" style="margin-top:14px"><span>Your resume, as plain text</span><textarea class="input" data-s="resume" rows="12" placeholder="Paste the text of your resume">${esc(s.resume)}</textarea></label></section>
+  <section class="panel"><h3>Appearance</h3><p class="sub">Follow your device, or pick one.</p>
+    <div class="seg" role="group" aria-label="Theme">${[['auto','Match device'],['light','Light'],['dark','Dark']].map(([v, l]) => `<button data-act="theme-set" data-v="${v}" aria-pressed="${s.theme === v}">${l}</button>`).join('')}</div></section>
+  <section class="panel"><h3>Your data</h3><p class="sub">Your Google Sheet is the main copy. A JSON backup is a handy extra snapshot. It leaves out your API key and the sheet connection.</p>
+    <div class="row wrap"><button class="btn" data-act="export-json">${icon('download', 16)} Export backup</button><button class="btn" data-act="import-json">${icon('upload', 16)} Import backup</button><button class="btn" data-act="export-csv">${icon('download', 16)} Export as CSV</button><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+    <div class="row wrap" style="margin-top:12px">${hasSample ? `<button class="btn" data-act="remove-sample">Remove sample data</button>` : `<button class="btn" data-act="sample">Load sample data</button>`}<button class="btn danger" data-act="wipe">${icon('trash', 16)} Delete all applications</button></div></section>
+  <section class="panel"><h3>Keyboard shortcuts</h3><p class="sub">Work without the mouse.</p>
+    <dl class="keys"><div><dt><kbd>N</kbd></dt><dd>Add application</dd></div><div><dt><kbd>/</kbd></dt><dd>Search</dd></div><div><dt><kbd>1</kbd>–<kbd>4</kbd></dt><dd>Switch views</dd></div><div><dt><kbd>Esc</kbd></dt><dd>Close the details panel</dd></div></dl></section>
+  </div>`;
+}
+
+// ---------- data helpers ----------
+function download(name, text, type) {
+  const b = new Blob([text], {type}), u = URL.createObjectURL(b), a = document.createElement('a');
+  a.href = u; a.download = name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 1500);
+}
+function exportCSV() {
+  const cols = ['company','role','location','workMode','source','status','priority','appliedOn','followUp','salaryExpected','salaryOffered','recruiter','contact','nextStep','tags','jdUrl','notes'];
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [[...cols, 'rounds', 'matchScore', 'updatedAt'].join(',')];
+  db.apps.forEach(a => rows.push([...cols.map(c => q(c === 'status' ? SLABEL[a.status] : a[c])), q(a.rounds.map(r => `${r.name || r.type} (${RSLABEL[r.status]})`).join('; ')), q(a.ai?.jd?.matchScore ?? ''), q(a.updatedAt)].join(',')));
+  download(`jobtrail-${todayISO()}.csv`, '\ufeff' + rows.join('\n'), 'text/csv');
+}
+function copyText(text) {
+  const done = () => toast('Copied to clipboard.');
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done, () => fallback());
+  else fallback();
+  function fallback() { const t = document.createElement('textarea'); t.value = text; document.body.append(t); t.select(); try { document.execCommand('copy'); done(); } catch { toast('Copy failed. Select the text and copy it manually.'); } t.remove(); }
+}
+function toast(msg, {action, label = 'Undo', ms = 5000} = {}) {
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = `<span>${esc(msg)}</span>`;
+  if (action) { const b = document.createElement('button'); b.textContent = label; b.onclick = () => { action(); t.remove(); }; t.append(b); }
+  $('#toasts').append(t);
+  setTimeout(() => t.remove(), action ? Math.max(ms, 6000) : ms);
+}
+function deleteApp(a) {
+  const idx = db.apps.indexOf(a); if (idx < 0) return;
+  db.apps.splice(idx, 1); markDeleted(a.id); save(); closeDrawer();
+  toast(`Deleted ${a.role || 'application'}${a.company ? ' at ' + a.company : ''}.`, {action:() => { db.apps.splice(idx, 0, a); a.updatedAt = nowISO(); markDirty(a.id); save(); render(); }});
+}
+
+// ---------- sample data ----------
+function loadSample() {
+  const iso = d => d.toISOString();
+  const R = (name, type, ago, status, rating, asked = '', notes = '') => ({id:uid(), name, type, date:day(daysAgo(ago)), mode:type === 'Take-home assignment' ? 'Async' : 'Video call', interviewer:'', status, rating, asked, notes});
+  const mk = (company, role, location, workMode, source, path, extra = {}) => {
+    const history = path.map(([s, n]) => ({status:s, at:iso(daysAgo(n))}));
+    const appliedStep = path.find(p => p[0] === 'applied');
+    return normalize({id:uid(), company, role, location, workMode, source, status:path[path.length - 1][0], appliedOn:appliedStep ? day(daysAgo(appliedStep[1])) : '', history, createdAt:iso(daysAgo(path[0][1])), updatedAt:history[history.length - 1].at, sample:true, ...extra});
+  };
+  const apps = [
+    mk('Kestrel Cloud','Senior Frontend Engineer','Pune','Hybrid','LinkedIn',[['applied',24],['screening',19],['interviewing',12]],{priority:'high', salaryExpected:'38 LPA', tags:'react, platform', nextStep:'Prepare for the system design round', jd:'Senior Frontend Engineer, Platform. Build and own the design system and micro-frontend platform used by 40 product teams. Strong React, TypeScript, testing (Playwright, Jest), performance profiling, CI/CD. Nice to have: module federation, accessibility expertise, mentoring.',
+      rounds:[R('Recruiter call','Recruiter call',19,'passed',4,'Notice period, current stack, reason for change','Friendly. Band shared as 35–42 LPA.'),R('DSA round','Coding',12,'passed',3,'Two medium array problems, then LRU cache','Slow on the second problem; finished with a hint.'),R('System design','System design',-3,'scheduled',0,'','Likely topic: feature-flag service or design system delivery.')],
+      questions:[{id:uid(), q:'What is your notice period?', a:'60 days, negotiable to 45.'},{id:uid(), q:'Why do you want to join Kestrel Cloud?', a:''}]}),
+    mk('Kestrel Cloud','Frontend Platform Lead','Pune','Hybrid','Naukri',[['applied',70],['screening',64],['rejected',60]],{notes:'Recruiter said they wanted someone with people-management experience.'}),
+    mk('Harbor Pay','Staff Software Engineer, Payments','Bengaluru','Onsite','Referral',[['applied',40],['screening',35],['interviewing',30],['offer',6]],{priority:'high', salaryExpected:'45 LPA', salaryOffered:'46 LPA + ESOPs', recruiter:'Ananya', nextStep:'Reply to offer by Friday',
+      rounds:[R('Recruiter call','Recruiter call',35,'passed',4),R('Coding','Coding',30,'passed',4,'Rate limiter, idempotency keys'),R('System design','System design',22,'passed',5,'Design a payouts ledger','Interviewer was impressed with the reconciliation approach.'),R('Hiring manager','Managerial',14,'passed',4,'Conflict handling, leading without authority')]}),
+    mk('Orbitly','Developer Experience Engineer','Remote','Remote','Naukri',[['applied',9],['screening',3]],{rounds:[R('Recruiter call','Recruiter call',-1,'scheduled',0)]}),
+    mk('Lumen Analytics','Senior Software Engineer','Hyderabad','Hybrid','Naukri',[['applied',33],['screening',28],['interviewing',22],['rejected',14]],{rounds:[R('Online test','Online assessment',22,'passed',4),R('Technical','Technical',16,'failed',2,'Concurrency, Java memory model','Struggled with concurrency questions.')]}),
+    mk('Pinecrest Systems','Platform Engineer','Pune','Onsite','Company website',[['applied',45],['ghosted',10]]),
+    mk('Tidewater AI','Senior Full Stack Engineer','Remote','Remote','LinkedIn',[['applied',4]],{followUp:day(daysAgo(-6))}),
+    mk('Quill Commerce','Senior Engineer, Marketplace Apps','Mumbai','Hybrid','Recruiter outreach',[['applied',15],['screening',12],['interviewing',8]],{priority:'high', rounds:[R('Recruiter call','Recruiter call',12,'passed',4),R('Take-home','Take-home assignment',3,'awaiting',4,'Build an app-install flow with OAuth','Submitted on time with tests.')]}),
+    mk('Saffron Health','Frontend Lead','Bengaluru','Hybrid','LinkedIn',[['applied',28],['rejected',20]]),
+    mk('Ridgeline Software','Senior SDET','Pune','Hybrid','Naukri',[['applied',21],['screening',17],['withdrawn',15]],{notes:'Role turned out to be mostly manual testing.'}),
+    mk('Northwind Labs','Engineering Manager, DevX','Remote','Remote','Referral',[['saved',2]],{priority:'med'}),
+    mk('Brightwave','Senior Developer Advocate','Bengaluru','Hybrid','LinkedIn',[['applied',11]],{followUp:day(daysAgo(1))}),
+    mk('Copperleaf','Senior Software Engineer','Pune','Onsite','Naukri',[['applied',55],['rejected',50]]),
+    mk('Atlas Mobility','SDE III','Hyderabad','Hybrid','LinkedIn',[['applied',62],['screening',58],['interviewing',52],['rejected',45]],{rounds:[R('Coding','Coding',52,'passed',3),R('System design','System design',47,'failed',2,'Design a ride-matching service','Ran out of time on scaling.')]})
+  ];
+  db.apps = [...apps, ...db.apps];
+  apps.forEach(a => markDirty(a.id));
+  save(); render();
+  toast('Sample data loaded. Remove it any time from Settings.');
+}
+
+// ---------- Google Sheet sync ----------
+const SYNC_KEY = 'jobtrail.sync';
+const CONN_KEY = 'jobtrail.connection';
+// The Apps Script lives once, in <script id="sheet-script"> in this file. Its version is read from there too.
+const SHEET_SCRIPT = ($('#sheet-script')?.textContent || '').trim();
+const SCRIPT_VERSION = +((SHEET_SCRIPT.match(/var SCRIPT_VERSION = (\d+)/) || [])[1] || 1);
+// The link to your sheet is stored on its own, so it survives imports and wipes.
+// It ends only when you unlink, or when this site's browser storage is cleared.
+let conn = loadConn();
+function loadConn() {
+  let c = {};
+  try { c = JSON.parse(localStorage.getItem(CONN_KEY) || '{}') || {}; } catch {}
+  if (!c.url && db.settings.sheetUrl) { c.url = db.settings.sheetUrl; c.secret = db.settings.sheetSecret; c.linkedAt = nowISO(); }
+  if ('sheetUrl' in db.settings || 'sheetSecret' in db.settings) { delete db.settings.sheetUrl; delete db.settings.sheetSecret; cacheLocal(); }
+  if (!c.secret) c.secret = newSecret();
+  try { localStorage.setItem(CONN_KEY, JSON.stringify(c)); } catch {}
+  return c;
+}
+function saveConn() { try { localStorage.setItem(CONN_KEY, JSON.stringify(conn)); } catch {} }
+const outdated = () => connected() && (conn.version || 1) < SCRIPT_VERSION;
+function noteMeta(d) {
+  if (!d) return;
+  if (d.version) conn.version = d.version;
+  if (d.sheetName) conn.sheetName = d.sheetName;
+  if (d.sheetUrl) conn.sheetLink = d.sheetUrl;
+  saveConn();
+}
+const linkCode = () => 'jobtrail:' + btoa(JSON.stringify({u:conn.url, s:conn.secret}));
+function parseLinkCode(v) {
+  if (!v.startsWith('jobtrail:')) return null;
+  try { const o = JSON.parse(atob(v.slice(9))); return o.u && o.s ? {url:o.u, secret:o.s} : null; } catch { return null; }
+}
+const sync = (() => {
+  try { const s = JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); return {dirty:new Set(s.dirty || []), deleted:new Set(s.deleted || []), metaDirty:!!s.metaDirty, lastSync:s.lastSync || null}; }
+  catch { return {dirty:new Set(), deleted:new Set(), metaDirty:false, lastSync:null}; }
+})();
+const syncSt = {state:'idle', error:'', inflight:false, timer:null, retry:null};
+function connected() { return !!(conn.url && conn.secret); }
+function persistSync() { try { localStorage.setItem(SYNC_KEY, JSON.stringify({dirty:[...sync.dirty], deleted:[...sync.deleted], metaDirty:sync.metaDirty, lastSync:sync.lastSync})); } catch {} }
+function markDirty(id) { sync.deleted.delete(id); sync.dirty.add(id); persistSync(); }
+function markDeleted(id) { sync.dirty.delete(id); sync.deleted.add(id); persistSync(); }
+function markMeta() { sync.metaDirty = true; persistSync(); }
+const pendingCount = () => sync.dirty.size + sync.deleted.size + (sync.metaDirty ? 1 : 0);
+function newSecret() { const b = new Uint8Array(24); crypto.getRandomValues(b); return btoa(String.fromCharCode(...b)).replace(/[+/=]/g, c => ({'+':'-', '/':'_', '=':''}[c])); }
+const sheetScript = () => SHEET_SCRIPT.replace('PASTE-YOUR-SECRET-HERE', conn.secret);
+function timeAgo(iso) {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 1) return 'just now'; if (m < 60) return m + ' min ago';
+  const h = Math.round(m / 60); return h < 24 ? h + 'h ago' : rel(iso);
+}
+
+async function callSheet(payload, c = conn) {
+  const res = await fetch(c.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({...payload, secret:c.secret}), redirect:'follow'});
+  const text = await res.text();
+  let d;
+  try { d = JSON.parse(text); }
+  catch { throw new Error(res.ok ? "The link didn't return Jobtrail data. Use the Web app URL ending in /exec, with access set to Anyone." : `The sheet request failed (HTTP ${res.status}).`); }
+  if (!d.ok) throw new Error(d.error || 'The sheet rejected the request.');
+  if (c === conn) noteMeta(d);
+  return d;
+}
+const syncErr = e => e instanceof TypeError ? (navigator.onLine ? "Couldn't reach the sheet. Check the Web app URL and that access is set to Anyone." : "You're offline. Changes will sync when you reconnect.") : e.message;
+function setSync(state) { syncSt.state = state; renderSyncState(); }
+function renderSyncState() {
+  const el = $('#saveState'); if (!el) return;
+  const n = pendingCount();
+  let txt, dot = '';
+  if (!connected()) { txt = 'Not linked: link a Google Sheet'; dot = 'warn'; }
+  else if (syncSt.state === 'syncing') { txt = 'Syncing with sheet'; dot = 'busy'; }
+  else if (syncSt.state === 'error') { txt = n ? `Not synced: ${plural(n, 'change')} waiting` : 'Sheet sync needs attention'; dot = 'bad'; }
+  else if (n) { txt = `${plural(n, 'change')} waiting to sync`; dot = 'warn'; }
+  else if (outdated()) { txt = 'Saved to sheet. Script update available'; dot = 'warn'; }
+  else txt = sync.lastSync ? `Saved to sheet ${timeAgo(sync.lastSync)}` : 'Connected to sheet';
+  el.innerHTML = `<span class="sdot ${dot}"></span>${esc(txt)}`;
+  el.title = syncSt.error || (connected() ? 'Select to sync now' : 'Open Settings to link your sheet');
+}
+function refreshViews() {
+  const ae = document.activeElement, typing = ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName);
+  if (!(typing && $('#content').contains(ae))) renderSoon();
+  if (ui.openId) {
+    if (!getApp(ui.openId)) closeDrawer();
+    else if (!(typing && $('#drawer').contains(ae))) renderDrawer();
+  }
+}
+function applyServerApp(sa) {
+  const n = normalize(sa), la = getApp(n.id);
+  if (la) Object.assign(la, n); else db.apps.push(n);
+}
+async function pushNow() {
+  if (!connected() || syncSt.inflight) return;
+  [...sync.dirty].forEach(id => { if (!getApp(id)) sync.dirty.delete(id); });
+  const ids = [...sync.dirty], deletes = [...sync.deleted], meta = sync.metaDirty;
+  if (!ids.length && !deletes.length && !meta) { renderSyncState(); return; }
+  const snap = new Map(ids.map(id => [id, getApp(id).updatedAt]));
+  syncSt.inflight = true; setSync('syncing');
+  try {
+    const d = await callSheet({action:'push', apps:ids.map(getApp), deletes, reports:meta ? db.reports : null, profile:meta ? {resume:db.settings.resume, targetRole:db.settings.targetRole} : null});
+    ids.forEach(id => { const a = getApp(id); if (!a || a.updatedAt === snap.get(id)) sync.dirty.delete(id); });
+    deletes.forEach(id => sync.deleted.delete(id));
+    if (meta) sync.metaDirty = false;
+    const conflicts = d.conflicts || [];
+    conflicts.forEach(sa => { applyServerApp(sa); sync.dirty.delete(sa.id); });
+    if (conflicts.length) { toast(`${plural(conflicts.length, 'application')} had newer edits in the sheet, so the sheet version was kept.`, {ms:8000}); refreshViews(); }
+    sync.lastSync = nowISO(); syncSt.error = ''; clearTimeout(syncSt.retry);
+    persistSync(); cacheLocal(); syncSt.inflight = false; setSync('ok');
+    if (pendingCount()) schedulePush();
+  } catch (e) {
+    syncSt.inflight = false; syncSt.error = syncErr(e); setSync('error');
+    clearTimeout(syncSt.retry); syncSt.retry = setTimeout(pushNow, 30000);
+  }
+}
+function schedulePush() { if (!connected()) return; clearTimeout(syncSt.timer); syncSt.timer = setTimeout(pushNow, 1200); }
+async function pullNow({initial = false} = {}) {
+  if (!connected() || syncSt.inflight) return;
+  syncSt.inflight = true; setSync('syncing');
+  try {
+    const d = await callSheet({action:'pull'});
+    mergeServer(d, initial);
+    sync.lastSync = nowISO(); syncSt.error = ''; persistSync(); syncSt.inflight = false; setSync('ok');
+  } catch (e) { syncSt.inflight = false; syncSt.error = syncErr(e); setSync('error'); }
+  if (pendingCount()) schedulePush();
+}
+function mergeServer(d, initial) {
+  const server = new Map((d.apps || []).map(a => [a.id, a]));
+  if (initial) {
+    const localOnly = db.apps.filter(a => !server.has(a.id) && !sync.dirty.has(a.id));
+    if (localOnly.length && confirm(`Upload ${plural(localOnly.length, 'application')} from this browser to your sheet?\n\nChoose Cancel to keep only what's already in the sheet.`)) localOnly.forEach(a => sync.dirty.add(a.id));
+  }
+  for (const [id, sa] of server) {
+    if (sync.deleted.has(id)) continue;
+    const la = getApp(id);
+    if (!la) applyServerApp(sa);
+    else if ((sa.updatedAt || '') > (la.updatedAt || '')) { applyServerApp(sa); sync.dirty.delete(id); }
+  }
+  db.apps = db.apps.filter(a => server.has(a.id) || sync.dirty.has(a.id));
+  if (!sync.metaDirty) {
+    if (d.reports) db.reports = {companies:{...(d.reports.companies || {})}, pipeline:d.reports.pipeline || null};
+    if (d.profile) { if (typeof d.profile.resume === 'string') db.settings.resume = d.profile.resume; if (typeof d.profile.targetRole === 'string') db.settings.targetRole = d.profile.targetRole; }
+  }
+  db.apps.sort((x, y) => y.updatedAt.localeCompare(x.updatedAt));
+  cacheLocal();
+  if (!(ui.view === 'settings' && $('#content').contains(document.activeElement))) refreshViews();
+}
+async function syncNow() { await pushNow(); await pullNow(); if (!syncSt.error) toast('Synced with your sheet.'); }
+async function connectSheet(btn) {
+  const raw = $('#sUrl').value.trim(), code = parseLinkCode(raw);
+  const cand = code || {url:raw, secret:($('#sSecret')?.value || conn.secret).trim()};
+  if (!/^https:\/\/script\.google\.com\/(a\/[^/]+\/)?macros\/s\/[^/]+\/exec\/?$/.test(cand.url)) { ui.sheetStatus = raw.startsWith('jobtrail:') ? "That link code isn't valid. Copy it again from a linked device." : 'Paste the Web app URL (starts with https://script.google.com/macros/s/ and ends with /exec), or a link code from another device.'; render(); return; }
+  if (cand.secret.length < 12) { ui.sheetStatus = 'The secret looks too short. Use the one in your setup script.'; render(); return; }
+  busyBtn(btn, 'Checking the sheet');
+  try {
+    const d = await callSheet({action:'ping'}, cand); // verify before saving the link
+    conn = {url:cand.url, secret:cand.secret, linkedAt:nowISO()}; noteMeta(d);
+  } catch (e) { ui.sheetStatus = syncErr(e); render(); return; }
+  await pullNow({initial:true});
+  ui.sheetStatus = '';
+  if (!syncSt.error) toast(`Linked to ${conn.sheetName || 'your sheet'}.`);
+  render();
+}
+async function unlinkSheet() {
+  if (pendingCount()) {
+    await pushNow();
+    if (pendingCount() && !confirm(`${plural(pendingCount(), 'change')} haven't reached the sheet yet and will be lost. Unlink anyway?`)) return;
+  }
+  if (!confirm("Unlink this browser from your Google Sheet?\n\nYour data stays in the sheet. This browser's working copy is cleared, and you can link again any time.")) return;
+  conn = {secret:conn.secret}; saveConn();
+  db.apps = []; db.reports = {companies:{}, pipeline:null};
+  sync.dirty.clear(); sync.deleted.clear(); sync.metaDirty = false; sync.lastSync = null; persistSync(); cacheLocal();
+  syncSt.state = 'idle'; syncSt.error = ''; ui.sheetStatus = '';
+  closeDrawer(); renderSyncState(); render();
+  toast('Unlinked. Your data is safe in the sheet.');
+}
+function beaconFlush() {
+  if (!connected() || !pendingCount() || !navigator.sendBeacon) return;
+  const body = JSON.stringify({action:'push', secret:conn.secret, apps:[...sync.dirty].map(getApp).filter(Boolean), deletes:[...sync.deleted], reports:sync.metaDirty ? db.reports : null, profile:sync.metaDirty ? {resume:db.settings.resume, targetRole:db.settings.targetRole} : null});
+  navigator.sendBeacon(conn.url, new Blob([body], {type:'text/plain;charset=utf-8'}));
+}
+function sheetPanel() {
+  const on = connected();
+  const secretField = `<label class="field full"><span>Secret</span><input class="input" id="sSecret" value="${esc(conn.secret)}" spellcheck="false" autocomplete="off"><span class="hint">Already in the setup script you copy. Change it only if your script uses a different one.</span></label>`;
+  const linkForm = `<div class="grid2" style="margin-top:14px">
+      <label class="field full"><span>Web app URL or link code</span><input class="input" id="sUrl" placeholder="https://script.google.com/macros/s/…/exec  or  jobtrail:…" spellcheck="false" autocomplete="off"></label>
+    </div>
+    <div class="row wrap" style="margin-top:12px"><button class="btn btn-primary" data-act="sheet-connect">Link sheet</button></div>
+    ${ui.sheetStatus ? `<p class="err" role="alert">${esc(ui.sheetStatus)}</p>` : ''}
+    <details class="conn"><summary>Advanced</summary><div class="grid2" style="margin-top:10px">${secretField}</div></details>`;
+  const badge = !on ? '<span class="pill st-screening">Not linked</span>' : syncSt.state === 'error' ? '<span class="pill st-rejected">Needs attention</span>' : outdated() ? '<span class="pill st-screening">Update available</span>' : '<span class="pill st-offer">Linked</span>';
+  if (on) return `<section class="panel"><div class="row between wrap"><h3>Google Sheet</h3>${badge}</div>
+    <p class="sub">Linked to ${conn.sheetLink ? `<a href="${esc(conn.sheetLink)}" target="_blank" rel="noopener">${esc(conn.sheetName || 'your sheet')}</a>` : esc(conn.sheetName || 'your sheet')}${conn.linkedAt ? ' since ' + fmtDate(conn.linkedAt) : ''}. The link stays in this browser until you unlink it or clear the site's storage.</p>
+    <div class="row wrap"><button class="btn" data-act="sync-now">Sync now</button>${conn.sheetLink ? `<a class="btn" href="${esc(conn.sheetLink)}" target="_blank" rel="noopener">${icon('link', 16)} Open sheet</a>` : ''}<button class="btn" data-act="copy-link">${icon('copy', 16)} Copy link code</button><button class="btn btn-ghost danger" data-act="sheet-disconnect">Unlink</button></div>
+    <p class="hint" style="margin-top:10px">${sync.lastSync ? 'Last synced ' + timeAgo(sync.lastSync) : ''}${pendingCount() ? `, ${plural(pendingCount(), 'change')} waiting` : ''}. Use the link code to connect your phone or another browser in one paste, and keep a copy somewhere safe, like your password manager.</p>
+    ${syncSt.error ? `<p class="err">${esc(syncSt.error)}</p>` : ''}
+    ${outdated() ? `<div class="callout" style="margin:14px 0 0"><p>A newer sheet script is available (version ${SCRIPT_VERSION}, yours is ${conn.version || 1}). Copy it, paste it over the old code in Apps Script, then choose <b>Deploy › Manage deployments › Edit › Version: New version › Deploy</b>. The URL stays the same.</p><button class="btn btn-sm" data-act="copy-script">${icon('copy', 15)} Copy new script</button></div>` : ''}
+    <details class="conn"><summary>Setup script and secret</summary><div class="row wrap" style="margin-top:10px"><button class="btn btn-sm" data-act="copy-script">${icon('copy', 15)} Copy setup script</button><button class="btn btn-sm btn-ghost" data-act="download-script">${icon('download', 15)} Download Code.gs</button></div></details>
+  </section>`;
+  return `<section class="panel"><div class="row between wrap"><h3>Google Sheet</h3>${badge}</div>
+    <p class="sub">Your data lives in a Google Sheet you own: one row per application, with rounds, questions, stage history, reports and your profile in their own tabs. Changes sync within seconds, and edits made in the sheet show up here.</p>
+    <h4 style="font-size:14.5px;margin:4px 0 8px">Already linked on another device?</h4>
+    <p class="hint">Copy its link code (Settings › Google Sheet) and paste it below.</p>
+    <h4 style="font-size:14.5px;margin:18px 0 8px">First time? Set up a sheet</h4>
+    <ol class="steps">
+      <li>Create a new Google Sheet at <a href="https://sheets.new" target="_blank" rel="noopener">sheets.new</a>, then open <b>Extensions › Apps Script</b>.</li>
+      <li>Delete the sample code, paste the setup script and save. Your private secret is already in it.
+        <div class="row wrap" style="margin-top:8px"><button class="btn btn-sm" data-act="copy-script">${icon('copy', 15)} Copy setup script</button><button class="btn btn-sm btn-ghost" data-act="download-script">${icon('download', 15)} Download Code.gs</button></div></li>
+      <li>Pick <b>setup</b> in the function menu, select <b>Run</b> and allow access. It creates the tabs.</li>
+      <li>Select <b>Deploy › New deployment</b>, choose <b>Web app</b>, set <i>Execute as</i> to <b>Me</b> and <i>Who has access</i> to <b>Anyone</b>. Deploy and copy the Web app URL.</li>
+      <li>Paste the URL below and link.</li>
+    </ol>${linkForm}
+  </section>`;
+}
+function initSync() {
+  renderSyncState();
+  if (connected()) pullNow();
+  setInterval(renderSyncState, 30000);
+  setInterval(() => { if (document.visibilityState === 'visible' && connected() && !pendingCount()) pullNow(); }, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') { if (connected()) pushNow().then(() => pullNow()); }
+    else beaconFlush();
+  });
+  window.addEventListener('pagehide', beaconFlush);
+  window.addEventListener('online', () => { if (connected()) pushNow(); });
+}
+
+// ---------- routing & render ----------
+const VIEWS = {board:['Board', renderBoard], list:['All applications', renderList], companies:['Companies', renderCompanies], insights:['Insights', renderInsights], settings:['Settings', renderSettings]};
+function render() {
+  const [title, fn] = VIEWS[ui.view];
+  $('#viewTitle').textContent = title;
+  $$('.nav-btn[data-view]').forEach(b => b.dataset.view === ui.view ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  $('.search').style.display = ['settings', 'insights'].includes(ui.view) ? 'none' : '';
+  destroyCharts();
+  fn($('#content'));
+}
+let renderT;
+function renderSoon() { clearTimeout(renderT); renderT = setTimeout(render, 220); }
+function go(view) { ui.view = view; render(); $('#content').scrollTop = 0; }
+const isDark = () => db.settings.theme === 'dark' || (db.settings.theme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+function applyTheme() {
+  const t = db.settings.theme;
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+  $('#themeBtn').innerHTML = `${icon(isDark() ? 'sun' : 'moon')}<span>${isDark() ? 'Light mode' : 'Dark mode'}</span>`;
+}
+
+// ---------- events ----------
+document.addEventListener('click', e => {
+  if (e.target.tagName === 'DIALOG') { e.target.close(); return; }
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const act = t.dataset.act, a = ui.openId ? getApp(ui.openId) : null;
+  const findR = () => a && a.rounds.find(r => r.id === t.dataset.id);
+  switch (act) {
+    case 'go': closeDrawer(); go(t.dataset.view); break;
+    case 'open': openDrawer(t.dataset.id); break;
+    case 'add': openAdd(t.dataset.status || 'applied'); break;
+    case 'sample': loadSample(); break;
+    case 'remove-sample': db.apps.filter(x => x.sample).forEach(x => markDeleted(x.id)); db.apps = db.apps.filter(x => !x.sample); save(); render(); toast('Sample data removed.'); break;
+    case 'clear-filters': ui.filters = {source:'', mode:'', priority:'', status:''}; ui.q = ''; $('#q').value = ''; render(); break;
+    case 'close': closeDrawer(); break;
+    case 'delete': if (a) deleteApp(a); break;
+    case 'tab': ui.tab = t.dataset.tab; renderDrawer(); break;
+    case 'seg': if (a) { a[t.dataset.field] = t.dataset.v; touch(a); $$(`[data-act="seg"][data-field="${t.dataset.field}"]`).forEach(b => b.setAttribute('aria-pressed', b === t)); renderSoon(); } break;
+    case 'add-round': if (a) {
+      a.rounds.push({id:uid(), name:'', type:a.rounds.length ? 'Technical' : 'Recruiter call', date:'', mode:'Video call', interviewer:'', status:'scheduled', rating:0, asked:'', notes:''});
+      touch(a); renderDrawer(); const ins = $$('#dbody .rname'); ins[ins.length - 1]?.focus(); $('#dbody').scrollTop = $('#dbody').scrollHeight;
+      if (['applied','screening'].includes(a.status)) toast('Round added. Move this application to Interviewing?', {label:'Move', action:() => { setStatus(a, 'interviewing'); renderDrawer(); renderSoon(); }});
+      renderSoon();
+    } break;
+    case 'del-round': if (a) { const i = a.rounds.findIndex(r => r.id === t.dataset.id); const [r] = a.rounds.splice(i, 1); touch(a); renderDrawer(); renderSoon(); toast('Round deleted.', {action:() => { a.rounds.splice(i, 0, r); touch(a); renderDrawer(); renderSoon(); }}); } break;
+    case 'rate': { const r = findR(); if (r) { const v = +t.dataset.v; r.rating = r.rating === v ? 0 : v; touch(a); renderDrawer(); renderSoon(); } } break;
+    case 'add-q': if (a) { const q = {id:uid(), q:t.dataset.text || '', a:''}; a.questions.push(q); touch(a); renderDrawer(); setTimeout(() => (t.dataset.text ? $('#ans-' + q.id) : $(`[data-q="${q.id}"][data-qf="q"]`))?.focus(), 20); } break;
+    case 'del-q': if (a) { const i = a.questions.findIndex(q => q.id === t.dataset.id); const [q] = a.questions.splice(i, 1); touch(a); renderDrawer(); toast('Question deleted.', {action:() => { a.questions.splice(i, 0, q); touch(a); renderDrawer(); }}); } break;
+    case 'copy-ans': { const v = $('#ans-' + t.dataset.id)?.value || ''; if (v.trim()) copyText(v); else toast('Nothing to copy yet.'); } break;
+    case 'copy-text': copyText(t.dataset.text || ''); break;
+    case 'ai-jd': if (a) aiJD(a); break;
+    case 'ai-q': if (a) aiQuestions(a, t.dataset.id, t); break;
+    case 'ai-company': aiCompany(t.dataset.key || ui.company, t); break;
+    case 'ai-pipeline': aiPipeline(t); break;
+    case 'company-of': if (a) { const k = coKey(a.company); closeDrawer(); ui.company = k; go('companies'); } break;
+    case 'goto-settings': closeDrawer(); go('settings'); break;
+    case 'sort': { const k = t.dataset.key; ui.sort = ui.sort.key === k ? {key:k, dir:-ui.sort.dir} : {key:k, dir:['updatedAt','appliedOn','rounds','match'].includes(k) ? -1 : 1}; render(); } break;
+    case 'co': ui.company = t.dataset.key; render(); $('#content').scrollTop = 0; break;
+    case 'range': ui.range = t.dataset.v; render(); break;
+    case 'print': window.print(); break;
+    case 'export-json': download(`jobtrail-backup-${todayISO()}.json`, JSON.stringify({...db, settings:{...db.settings, apiKey:''}}, null, 2), 'application/json'); toast('Backup downloaded.'); break;
+    case 'import-json': $('#importFile').click(); break;
+    case 'export-csv': exportCSV(); break;
+    case 'wipe': if (confirm(connected() ? "Delete every application and report from this browser AND from your Google Sheet? This can't be undone." : "Delete every application and report stored in this browser? This can't be undone.")) { db.apps.forEach(x => markDeleted(x.id)); db.apps = []; db.reports = {companies:{}, pipeline:null}; markMeta(); save(); closeDrawer(); render(); toast('All applications deleted.'); } break;
+    case 'sync-click': if (!connected() || syncSt.state === 'error' || (outdated() && !pendingCount())) { closeDrawer(); go('settings'); } else syncNow(); break;
+    case 'sync-now': syncNow(); break;
+    case 'copy-script': copyText(sheetScript()); break;
+    case 'download-script': download('Code.gs', sheetScript(), 'text/plain'); break;
+    case 'sheet-connect': connectSheet(t); break;
+    case 'sheet-disconnect': unlinkSheet(); break;
+    case 'copy-link': copyText(linkCode()); break;
+    case 'toggle-key': { const k = $('#sKey'); const show = k.type === 'password'; k.type = show ? 'text' : 'password'; t.textContent = show ? 'Hide' : 'Show'; } break;
+    case 'load-models': (async () => { if (!db.settings.apiKey) { ui.keyStatus = 'Add your API key first.'; render(); return; } busyBtn(t, 'Loading'); try { ui.models = await listModels(); ui.keyStatus = `Found ${plural(ui.models.length, 'model')}. Pick one in the Model field.`; } catch (err) { ui.keyStatus = err instanceof TypeError ? "Couldn't reach Gemini. Check your connection." : err.message; } render(); })(); break;
+    case 'test-key': (async () => { busyBtn(t, 'Testing'); try { const r = await gemini('Reply with exactly the word: ready', {temperature:0}); ui.keyStatus = `Connected to ${db.settings.model}. Gemini replied “${r.slice(0, 40)}”.`; } catch (err) { ui.keyStatus = err instanceof TypeError ? "Couldn't reach Gemini. Check your connection." : err.message; } render(); })(); break;
+    case 'theme': db.settings.theme = isDark() ? 'light' : 'dark'; applyTheme(); save(); render(); break;
+    case 'theme-set': db.settings.theme = t.dataset.v; applyTheme(); save(); render(); break;
+    case 'dlg-cancel': t.closest('dialog')?.close(); break;
+    case 'fill': aiFill(t); break;
+    case 'add-save': saveAdd(); break;
+    case 'outcome': { const x = getApp(ui.pendingOutcome); $('#outcomeDlg').close(); if (x) { const prev = x.status; setStatus(x, t.dataset.v); render(); toast(`Closed as ${SLABEL[t.dataset.v].toLowerCase()}.`, {action:() => { x.status = prev; x.history.pop(); touch(x); render(); }}); } } break;
+  }
+});
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.id === 'q') { ui.q = el.value; renderSoon(); return; }
+  if (el.dataset.s !== undefined) { db.settings[el.dataset.s] = el.value; if (['resume','targetRole'].includes(el.dataset.s)) markMeta(); save(); return; }
+  const a = ui.openId && el.closest('#drawer') ? getApp(ui.openId) : null;
+  if (!a) return;
+  if (el.dataset.f) {
+    a[el.dataset.f] = el.value; touch(a);
+    if (el.dataset.f === 'jdUrl') { const l = $('#jdOpen'), u = safeUrl(el.value.trim()); l.href = u || '#'; l.hidden = !u; }
+    if (el.dataset.f === 'jd') { const w = el.value.trim().split(/\s+/).filter(Boolean).length; $('#jdWords').textContent = plural(w, 'word'); const b = $('[data-act="ai-jd"]', $('#dbody')); if (b) { b.disabled = !el.value.trim(); b.removeAttribute('title'); } }
+    if (el.dataset.f === 'company') { const lg = $('#drawer .d-title .logo'); lg.style.setProperty('--h', hue(el.value)); lg.textContent = initial(el.value); }
+    renderSoon(); return;
+  }
+  if (el.dataset.rf) { const r = a.rounds.find(x => x.id === el.dataset.r); if (r) { r[el.dataset.rf] = el.value; touch(a); if (el.dataset.rf === 'status') el.parentElement.className = 'sel-wrap rs-' + el.value; renderSoon(); } return; }
+  if (el.dataset.qf) { const q = a.questions.find(x => x.id === el.dataset.q); if (q) { q[el.dataset.qf] = el.value; touch(a); } }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.filter) { ui.filters[el.dataset.filter] = el.value; render(); return; }
+  if (el.hasAttribute('data-status')) { const a = getApp(ui.openId); if (a) { setStatus(a, el.value); renderDrawer(); renderSoon(); } return; }
+  if (el.id === 'importFile' && el.files[0]) {
+    const f = el.files[0], r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!Array.isArray(d.apps)) throw new Error('bad');
+        if (!confirm(`Replace your current ${plural(db.apps.length, 'application')} with ${plural(d.apps.length, 'application')} from this backup?`)) return;
+        const cur = db.settings, def = defaults(), oldIds = db.apps.map(x => x.id);
+        db = {apps:d.apps.map(normalize), settings:{...def.settings, ...(d.settings || {}), apiKey:(d.settings && d.settings.apiKey) || cur.apiKey}, reports:{...def.reports, ...(d.reports || {}), companies:{...((d.reports || {}).companies || {})}}};
+        const newIds = new Set(db.apps.map(x => x.id));
+        oldIds.filter(id => !newIds.has(id)).forEach(markDeleted);
+        db.apps.forEach(x => { x.updatedAt = nowISO(); markDirty(x.id); }); markMeta();
+        save(); applyTheme(); render(); toast(connected() ? 'Backup imported. Syncing it to your sheet.' : 'Backup imported.');
+      } catch { toast("That file isn't a Jobtrail backup."); }
+      el.value = '';
+    };
+    r.readAsText(f);
+  }
+});
+document.addEventListener('keydown', e => {
+  const tag = e.target.tagName, typing = ['INPUT','TEXTAREA','SELECT'].includes(tag) || e.target.isContentEditable;
+  const dlgOpen = !!document.querySelector('dialog[open]');
+  if (e.key === 'Escape') { if (dlgOpen) return; if (ui.openId) { e.preventDefault(); closeDrawer(); } else if (e.target.id === 'q') e.target.blur(); return; }
+  if (e.key === 'Enter' && tag === 'INPUT' && e.target.closest('#addDlg')) { e.preventDefault(); saveAdd(); return; }
+  if ((e.key === 'Enter' || e.key === ' ') && !typing && e.target.matches('[data-act="open"]:not(button)')) { e.preventDefault(); openDrawer(e.target.dataset.id); return; }
+  if (typing || dlgOpen || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === '/') { e.preventDefault(); closeDrawer(); $('#q').focus(); }
+  else if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAdd(); }
+  else if (['1','2','3','4'].includes(e.key) && !ui.openId) go(['board','list','companies','insights'][+e.key - 1]);
+});
+const content = $('#content');
+content.addEventListener('dragstart', e => { const c = e.target.closest?.('.card'); if (!c) return; e.dataTransfer.setData('text/plain', c.dataset.id); e.dataTransfer.effectAllowed = 'move'; c.classList.add('dragging'); });
+content.addEventListener('dragend', e => { e.target.closest?.('.card')?.classList.remove('dragging'); $$('.col.drop').forEach(x => x.classList.remove('drop')); });
+content.addEventListener('dragover', e => { const col = e.target.closest?.('.col'); if (!col) return; e.preventDefault(); $$('.col.drop').forEach(x => x !== col && x.classList.remove('drop')); col.classList.add('drop'); });
+content.addEventListener('dragleave', e => { const col = e.target.closest?.('.col'); if (col && !col.contains(e.relatedTarget)) col.classList.remove('drop'); });
+content.addEventListener('drop', e => {
+  const col = e.target.closest?.('.col'); if (!col) return;
+  e.preventDefault(); col.classList.remove('drop');
+  const a = getApp(e.dataTransfer.getData('text/plain')); if (!a) return;
+  const target = col.dataset.col; if (COLOF[a.status] === target) return;
+  if (target === 'closed') { openOutcome(a.id); return; }
+  const prev = a.status; setStatus(a, target); render();
+  toast(`Moved to ${SLABEL[target]}.`, {action:() => { a.status = prev; a.history.pop(); touch(a); render(); }});
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (db.settings.theme === 'auto') { applyTheme(); render(); } });
+
+// ---------- init ----------
+$$('[data-icon]').forEach(el => { el.outerHTML = icon(el.dataset.icon); });
+applyTheme();
+render();
+initSync();
+})();
+</script>
+</body>
+</html>
